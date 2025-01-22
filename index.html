@@ -92,6 +92,12 @@
       max-width: 100%;
       height: auto;
     }
+
+    .filter-container {
+      margin-bottom: 20px;
+      /* display: flex;
+      justify-content: center; */
+    }
   </style>
 </head>
 <body>
@@ -117,6 +123,8 @@
     </select>
   </div>
 
+  
+
   <div class="button-container">
     <button onclick="generovatTabulku()">Generovat Hodnoty</button>
   </div>
@@ -125,143 +133,120 @@
     <img id="section-image" src="" alt="Typ průřezu">
   </div>
 
+  <!-- Filtr pro zobrazení sloupců -->
+  <!-- Filtr pro zobrazení sloupců -->
+<div class="filter-container" id="filter-container" style="display: none;">
+    <label for="filtr">Filtr:</label>
+    <select id="filtr" onchange="generovatTabulku()">
+      <option value="all">Vše</option>
+      <option value="hmotnost">HMOTNOST</option>
+      <option value="dimenze">DIMENZE</option>
+      <option value="plocha">PLOCHA</option>
+      <option value="vlastnosti">VLASTNOSTI</option>
+      <option value="ohyb">OHYB</option>
+      <option value="tlak">TLAK</option>
+    </select>
+</div>
+  
+
   <div class="table-container">
     <table id="tabulka">
-      <thead>
-        <tr>
-          <th rowspan="2" colspan="2">PRVEK</th>
-          <th rowspan="1">HMOTNOST</th>
-          <th colspan="5">DIMENZE</th>
-          <th colspan="2">PLOCHA</th>
-          <th colspan="10">VLASTNOSTI</th>
-          <th colspan="4">OHYB</th>
-          <th colspan="4">TLAK</th>
-        </tr>
-        <tr>
-          <th>G (kg/m)</th>
-          <th>h (mm)</th><th>b (mm)</th><th>tw (mm)</th><th>tf (mm)</th><th>r (mm)</th>
-          <th>A (mm²)</th><th>Avz (mm²)</th>
-          <th>Iy (mm⁴)</th><th>Wy (mm³)</th><th>Wpl,y (mm³)</th><th>iy (mm)</th><th>Iz (mm⁴)</th><th>Wz (mm³)</th><th>Wpl,z (mm³)</th><th>iz (mm)</th><th>It (mm⁴)</th><th>Iw (mm⁴)</th>
-          <th>S235</th><th>S275</th><th>S355</th><th>S460</th>
-          <th>S235</th><th>S275</th><th>S355</th><th>S460</th>
-        </tr>
+      <thead id="tabulka-head">
+        <!-- Dynamicky se načítají nadpisy -->
       </thead>
       <tbody>
-        <!-- Prázdná políčka pro výchozí zobrazení -->
-        <tr>
-          <td colspan="2"></td>
-          <td></td>
-          <td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td>
-        </tr>
+        <!-- Dynamicky se načítají řádky -->
       </tbody>
     </table>
   </div>
-
+  
   <div class="button-container">
-    <button onclick="exportovatHodnoty()">Exportovat Hodnoty</button>
+    <button onclick="exportovatHodnoty('vsechny')">Exportovat Všechny Hodnoty</button>
+    <button onclick="exportovatHodnoty('filtr')">Exportovat Zobrazené Hodnoty</button>
   </div>
 </div>
 
 <script>
   function generovatTabulku() {
-    // Získání hodnot z výběrů
-    var typ = document.getElementById('typ').value;
-    var velikost = document.getElementById('velikost').value;
+  var typ = document.getElementById('typ').value;
+  var velikost = document.getElementById('velikost').value;
+  var filtr = document.getElementById('filtr').value;
 
-    // Zobrazení obrázku pro daný typ průřezu
-    var imageContainer = document.getElementById('image-container');
-    var sectionImage = document.getElementById('section-image');
+  var hmotnost, dimenze, plocha, vlastnosti, ohyb, tlak;
 
-    if (typ === 'IPE') {
-      sectionImage.src = 'Pictures/IPE.png';  // Cesta k obrázku IPE
-    } else if (typ === 'HEA') {
-      sectionImage.src = 'Pictures/HEA.png';  // Cesta k obrázku HEA
-    } else if (typ === 'HEB') {
-      sectionImage.src = 'Pictures/HEB.png';  // Cesta k obrázku HEB (pokud existuje)
-    } else if (typ === 'RO') {
-      sectionImage.src = 'Pictures/RO.png';  // Cesta k obrázku HEB (pokud existuje)
-    }
-
-    // Zobrazit obrázek
-    imageContainer.style.display = 'block';
-
-    // Hodnoty podle typu a velikosti
-    var hmotnost, dimenze, plocha, vlastnosti, ohyb, tlak;
-
-    if (velikost === '180') {
-      hmotnost = "80";
-      dimenze = ["180", "180", "10", "20", "20"];
-      plocha = ["18000", "9000"];
-      vlastnosti = ["25000", "1000", "1200", "5", "20000", "800", "950", "4", "300", "1500"];
-      ohyb = ["1", "1", "1", "1"];
-      tlak = ["1", "1", "1", "1"];
-    } else if (velikost === '250') {
-      hmotnost = "90";
-      dimenze = ["250", "250", "12", "24", "22"];
-      plocha = ["30000", "15000"];
-      vlastnosti = ["50000", "2000", "2400", "6", "40000", "1600", "1900", "5", "600", "3000"];
-      ohyb = ["1", "1", "1", "1"];
-      tlak = ["1", "1", "1", "1"];
-    } else if (velikost === '360') {
-      hmotnost = "100";
-      dimenze = ["360", "360", "16", "30", "30"];
-      plocha = ["50000", "25000"];
-      vlastnosti = ["100000", "4000", "4800", "7", "80000", "3200", "3800", "6", "900", "4500"];
-      ohyb = ["1", "1", "1", "1"];
-      tlak = ["1", "1", "1", "1"];
-    }
-
-    // Sestavení tabulky
-    var radek = `
-      <tr>
-        <td>${typ}</td>
-        <td>${velikost}</td>
-        <td>${hmotnost}</td>
-        <td>${dimenze[0]}</td>
-        <td>${dimenze[1]}</td>
-        <td>${dimenze[2]}</td>
-        <td>${dimenze[3]}</td>
-        <td>${dimenze[4]}</td>
-        <td>${plocha[0]}</td>
-        <td>${plocha[1]}</td>
-        <td>${vlastnosti[0]}</td>
-        <td>${vlastnosti[1]}</td>
-        <td>${vlastnosti[2]}</td>
-        <td>${vlastnosti[3]}</td>
-        <td>${vlastnosti[4]}</td>
-        <td>${vlastnosti[5]}</td>
-        <td>${vlastnosti[6]}</td>
-        <td>${vlastnosti[7]}</td>
-        <td>${vlastnosti[8]}</td>
-        <td>${vlastnosti[9]}</td>
-        <td>${ohyb[0]}</td>
-        <td>${ohyb[1]}</td>
-        <td>${ohyb[2]}</td>
-        <td>${ohyb[3]}</td>
-        <td>${tlak[0]}</td>
-        <td>${tlak[1]}</td>
-        <td>${tlak[2]}</td>
-        <td>${tlak[3]}</td>
-      </tr>
-    `;
-
-    // Vložení do tabulky
-    document.querySelector('#tabulka tbody').innerHTML = radek;
+  if (velikost === '180') {
+    hmotnost = "80";
+    dimenze = ["180", "180", "10", "20", "20"];
+    plocha = ["18000", "9000"];
+    vlastnosti = ["25000", "1000", "1200", "5", "20000", "800", "950", "4", "300", "1500"];
+    ohyb = ["1", "1", "1", "1"];
+    tlak = ["1", "1", "1", "1"];
+  } else if (velikost === '250') {
+    hmotnost = "90";
+    dimenze = ["250", "250", "12", "24", "22"];
+    plocha = ["30000", "15000"];
+    vlastnosti = ["50000", "2000", "2400", "6", "40000", "1600", "1900", "5", "600", "3000"];
+    ohyb = ["1", "1", "1", "1"];
+    tlak = ["1", "1", "1", "1"];
+  } else if (velikost === '360') {
+    hmotnost = "100";
+    dimenze = ["360", "360", "16", "30", "30"];
+    plocha = ["50000", "25000"];
+    vlastnosti = ["100000", "4000", "4800", "7", "80000", "3200", "3800", "6", "900", "4500"];
+    ohyb = ["1", "1", "1", "1"];
+    tlak = ["1", "1", "1", "1"];
   }
 
-  function exportovatHodnoty() {
-  // Získání hodnot z tabulky
-  var tabulka = document.getElementById("tabulka");
-  var wb = XLSX.utils.table_to_book(tabulka, {sheet: "Data"});
+  // Dynamické nadpisy
+  var tabulkaHead = document.getElementById('tabulka-head');
+  var headerRow = `<tr><th rowspan="2" colspan="2">PRVEK</th>`;
+  if (filtr === 'all' || filtr === 'hmotnost') headerRow += `<th rowspan="1">HMOTNOST</th>`;
+  if (filtr === 'all' || filtr === 'dimenze') headerRow += `<th colspan="5">DIMENZE</th>`;
+  if (filtr === 'all' || filtr === 'plocha') headerRow += `<th colspan="2">PLOCHA</th>`;
+  if (filtr === 'all' || filtr === 'vlastnosti') headerRow += `<th colspan="10">VLASTNOSTI</th>`;
+  if (filtr === 'all' || filtr === 'ohyb') headerRow += `<th colspan="4">OHYB</th>`;
+  if (filtr === 'all' || filtr === 'tlak') headerRow += `<th colspan="4">TLAK</th>`;
+  headerRow += `</tr><tr>`;
+  if (filtr === 'all' || filtr === 'hmotnost') headerRow += `<th>G (kg/m)</th>`;
+  if (filtr === 'all' || filtr === 'dimenze') headerRow += `<th>h (mm)</th><th>b (mm)</th><th>tw (mm)</th><th>tf (mm)</th><th>r (mm)</th>`;
+  if (filtr === 'all' || filtr === 'plocha') headerRow += `<th>A (mm²)</th><th>Avz (mm²)</th>`;
+  if (filtr === 'all' || filtr === 'vlastnosti') headerRow += `<th>Iy (mm⁴)</th><th>Wy (mm³)</th><th>Wpl,y (mm³)</th><th>iy (mm)</th><th>Iz (mm⁴)</th><th>Wz (mm³)</th><th>Wpl,z (mm³)</th><th>iz (mm)</th><th>It (mm⁴)</th><th>Wt (mm³)</th>`;
+  if (filtr === 'all' || filtr === 'ohyb') headerRow += `<th>My (kNm)</th><th>Mz (kNm)</th><th>Mt (kNm)</th><th>Vy (kN)</th>`;
+  if (filtr === 'all' || filtr === 'tlak') headerRow += `<th>Py (kN)</th><th>Pz (kN)</th><th>Pt (kN)</th><th>P (kN)</th>`;
+  headerRow += `</tr>`;
+  tabulkaHead.innerHTML = headerRow;
 
-  // Export do souboru Excel
-  XLSX.writeFile(wb, "vystup.xlsx");
+  // Dynamické řádky
+  var radek = `<tr><td>${typ}</td><td>${velikost}</td>`;
+  if (filtr === 'all' || filtr === 'hmotnost') radek += `<td>${hmotnost}</td>`;
+  if (filtr === 'all' || filtr === 'dimenze') radek += `<td>${dimenze.join('</td><td>')}</td>`;
+  if (filtr === 'all' || filtr === 'plocha') radek += `<td>${plocha.join('</td><td>')}</td>`;
+  if (filtr === 'all' || filtr === 'vlastnosti') radek += `<td>${vlastnosti.join('</td><td>')}</td>`;
+  if (filtr === 'all' || filtr === 'ohyb') radek += `<td>${ohyb.join('</td><td>')}</td>`;
+  if (filtr === 'all' || filtr === 'tlak') radek += `<td>${tlak.join('</td><td>')}</td>`;
+  radek += `</tr>`;
+
+  // Aktualizace tabulky
+  document.querySelector('#tabulka tbody').innerHTML = radek;
+
+  // Zobrazit filtr
+  document.getElementById('filter-container').style.display = 'block';
 }
 
+  function exportovatHodnoty(exportType) {
+    var tabulka = document.getElementById('tabulka');
+    var wb;
+    
+    if (exportType === 'filtr') {
+      var filteredTable = document.createElement('table');
+      filteredTable.innerHTML = tabulka.outerHTML;
+      wb = XLSX.utils.table_to_book(filteredTable);
+    } else if (exportType === 'vsechny') {
+      wb = XLSX.utils.table_to_book(tabulka);
+    }
+
+    XLSX.writeFile(wb, 'export_hodnot.xlsx');
+  }
 </script>
 
 </body>
