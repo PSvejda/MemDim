@@ -95,8 +95,8 @@
 
     .filter-container {
       margin-bottom: 20px;
-      /* display: flex;
-      justify-content: center; */
+      display: flex;
+      justify-content: center;
     }
   </style>
 </head>
@@ -167,71 +167,83 @@
 </div>
 
 <script>
+  console.log("JavaScript je připojen!");
+
   function generovatTabulku() {
-  var typ = document.getElementById('typ').value;
-  var velikost = document.getElementById('velikost').value;
-  var filtr = document.getElementById('filtr').value;
+    var typ = document.getElementById('typ').value;
+    var velikost = document.getElementById('velikost').value;
+    var filtr = document.getElementById('filtr').value;
+    
+    // **Zobrazení obrázku**
+    var imagePath = `Pictures/${typ}.png`;
+    var imageContainer = document.getElementById('image-container');
+    var sectionImage = document.getElementById('section-image');
 
-  var hmotnost, dimenze, plocha, vlastnosti, ohyb, tlak;
+    sectionImage.src = imagePath;
+    imageContainer.style.display = 'block';
 
-  if (velikost === '180') {
-    hmotnost = "80";
-    dimenze = ["180", "180", "10", "20", "20"];
-    plocha = ["18000", "9000"];
-    vlastnosti = ["25000", "1000", "1200", "5", "20000", "800", "950", "4", "300", "1500"];
-    ohyb = ["1", "1", "1", "1"];
-    tlak = ["1", "1", "1", "1"];
-  } else if (velikost === '250') {
-    hmotnost = "90";
-    dimenze = ["250", "250", "12", "24", "22"];
-    plocha = ["30000", "15000"];
-    vlastnosti = ["50000", "2000", "2400", "6", "40000", "1600", "1900", "5", "600", "3000"];
-    ohyb = ["1", "1", "1", "1"];
-    tlak = ["1", "1", "1", "1"];
-  } else if (velikost === '360') {
-    hmotnost = "100";
-    dimenze = ["360", "360", "16", "30", "30"];
-    plocha = ["50000", "25000"];
-    vlastnosti = ["100000", "4000", "4800", "7", "80000", "3200", "3800", "6", "900", "4500"];
-    ohyb = ["1", "1", "1", "1"];
-    tlak = ["1", "1", "1", "1"];
-  }
+    var hmotnost, dimenze, plocha, vlastnosti, ohyb, tlak;
 
-  // Dynamické nadpisy
-  var tabulkaHead = document.getElementById('tabulka-head');
-  var headerRow = `<tr><th rowspan="2" colspan="2">PRVEK</th>`;
-  if (filtr === 'all' || filtr === 'hmotnost') headerRow += `<th rowspan="1">HMOTNOST</th>`;
-  if (filtr === 'all' || filtr === 'dimenze') headerRow += `<th colspan="5">DIMENZE</th>`;
-  if (filtr === 'all' || filtr === 'plocha') headerRow += `<th colspan="2">PLOCHA</th>`;
-  if (filtr === 'all' || filtr === 'vlastnosti') headerRow += `<th colspan="10">VLASTNOSTI</th>`;
-  if (filtr === 'all' || filtr === 'ohyb') headerRow += `<th colspan="4">OHYB</th>`;
-  if (filtr === 'all' || filtr === 'tlak') headerRow += `<th colspan="4">TLAK</th>`;
-  headerRow += `</tr><tr>`;
-  if (filtr === 'all' || filtr === 'hmotnost') headerRow += `<th>G (kg/m)</th>`;
-  if (filtr === 'all' || filtr === 'dimenze') headerRow += `<th>h (mm)</th><th>b (mm)</th><th>tw (mm)</th><th>tf (mm)</th><th>r (mm)</th>`;
-  if (filtr === 'all' || filtr === 'plocha') headerRow += `<th>A (mm²)</th><th>Avz (mm²)</th>`;
-  if (filtr === 'all' || filtr === 'vlastnosti') headerRow += `<th>Iy (mm⁴)</th><th>Wy (mm³)</th><th>Wpl,y (mm³)</th><th>iy (mm)</th><th>Iz (mm⁴)</th><th>Wz (mm³)</th><th>Wpl,z (mm³)</th><th>iz (mm)</th><th>It (mm⁴)</th><th>Wt (mm³)</th>`;
-  if (filtr === 'all' || filtr === 'ohyb') headerRow += `<th>My (kNm)</th><th>Mz (kNm)</th><th>Mt (kNm)</th><th>Vy (kN)</th>`;
-  if (filtr === 'all' || filtr === 'tlak') headerRow += `<th>Py (kN)</th><th>Pz (kN)</th><th>Pt (kN)</th><th>P (kN)</th>`;
-  headerRow += `</tr>`;
-  tabulkaHead.innerHTML = headerRow;
+    if (velikost === '180') {
+      hmotnost = "80";
+      dimenze = ["180", "180", "10", "20", "20"];
+      plocha = ["18000", "9000"];
+      vlastnosti = ["25000", "1000", "1200", "5", "20000", "800", "950", "4", "300", "1500"];
+      ohyb = ["1", "1", "1", "1"];
+      tlak = ["1", "1", "1", "1"];
+    } else if (velikost === '250') {
+      hmotnost = "90";
+      dimenze = ["250", "250", "12", "24", "22"];
+      plocha = ["30000", "15000"];
+      vlastnosti = ["50000", "2000", "2400", "6", "40000", "1600", "1900", "5", "600", "3000"];
+      ohyb = ["1", "1", "1", "1"];
+      tlak = ["1", "1", "1", "1"];
+    } else if (velikost === '360') {
+      hmotnost = "100";
+      dimenze = ["360", "360", "16", "30", "30"];
+      plocha = ["50000", "25000"];
+      vlastnosti = ["100000", "4000", "4800", "7", "80000", "3200", "3800", "6", "900", "4500"];
+      ohyb = ["1", "1", "1", "1"];
+      tlak = ["1", "1", "1", "1"];
+    }
 
-  // Dynamické řádky
-  var radek = `<tr><td>${typ}</td><td>${velikost}</td>`;
-  if (filtr === 'all' || filtr === 'hmotnost') radek += `<td>${hmotnost}</td>`;
-  if (filtr === 'all' || filtr === 'dimenze') radek += `<td>${dimenze.join('</td><td>')}</td>`;
-  if (filtr === 'all' || filtr === 'plocha') radek += `<td>${plocha.join('</td><td>')}</td>`;
-  if (filtr === 'all' || filtr === 'vlastnosti') radek += `<td>${vlastnosti.join('</td><td>')}</td>`;
-  if (filtr === 'all' || filtr === 'ohyb') radek += `<td>${ohyb.join('</td><td>')}</td>`;
-  if (filtr === 'all' || filtr === 'tlak') radek += `<td>${tlak.join('</td><td>')}</td>`;
-  radek += `</tr>`;
+    // Dynamické nadpisy
+    var tabulkaHead = document.getElementById('tabulka-head');
+    var headerRow = `<tr><th rowspan="2" colspan="2">PRVEK</th>`;
+    if (filtr === 'all' || filtr === 'hmotnost') headerRow += `<th rowspan="1">HMOTNOST</th>`;
+    if (filtr === 'all' || filtr === 'dimenze') headerRow += `<th colspan="5">DIMENZE</th>`;
+    if (filtr === 'all' || filtr === 'plocha') headerRow += `<th colspan="2">PLOCHA</th>`;
+    if (filtr === 'all' || filtr === 'vlastnosti') headerRow += `<th colspan="10">VLASTNOSTI</th>`;
+    if (filtr === 'all' || filtr === 'ohyb') headerRow += `<th colspan="4">OHYB</th>`;
+    if (filtr === 'all' || filtr === 'tlak') headerRow += `<th colspan="4">TLAK</th>`;
+    headerRow += `</tr><tr>`;
+    if (filtr === 'all' || filtr === 'hmotnost') headerRow += `<th>G (kg/m)</th>`;
+    if (filtr === 'all' || filtr === 'dimenze') headerRow += `<th>h (mm)</th><th>b (mm)</th><th>tw (mm)</th><th>tf (mm)</th><th>r (mm)</th>`;
+    if (filtr === 'all' || filtr === 'plocha') headerRow += `<th>A (mm²)</th><th>Avz (mm²)</th>`;
+    if (filtr === 'all' || filtr === 'vlastnosti') headerRow += `<th>Iy (mm⁴)</th><th>Wy (mm³)</th><th>Wpl,y (mm³)</th><th>iy (mm)</th><th>Iz (mm⁴)</th><th>Wz (mm³)</th><th>Wpl,z (mm³)</th><th>iz (mm)</th><th>It (mm⁴)</th><th>Wt (mm³)</th>`;
+    if (filtr === 'all' || filtr === 'ohyb') headerRow += `<th>My (kNm)</th><th>Mz (kNm)</th><th>Mt (kNm)</th><th>Vy (kN)</th>`;
+    if (filtr === 'all' || filtr === 'tlak') headerRow += `<th>Py (kN)</th><th>Pz (kN)</th><th>Pt (kN)</th><th>P (kN)</th>`;
+    headerRow += `</tr>`;
+    tabulkaHead.innerHTML = headerRow;
 
-  // Aktualizace tabulky
-  document.querySelector('#tabulka tbody').innerHTML = radek;
+    // Dynamické řádky
+    var radek = `<tr><td>${typ}</td><td>${velikost}</td>`;
+    if (filtr === 'all' || filtr === 'hmotnost') radek += `<td>${hmotnost}</td>`;
+    if (filtr === 'all' || filtr === 'dimenze') radek += `<td>${dimenze.join('</td><td>')}</td>`;
+    if (filtr === 'all' || filtr === 'plocha') radek += `<td>${plocha.join('</td><td>')}</td>`;
+    if (filtr === 'all' || filtr === 'vlastnosti') radek += `<td>${vlastnosti.join('</td><td>')}</td>`;
+    if (filtr === 'all' || filtr === 'ohyb') radek += `<td>${ohyb.join('</td><td>')}</td>`;
+    if (filtr === 'all' || filtr === 'tlak') radek += `<td>${tlak.join('</td><td>')}</td>`;
+    radek += `</tr>`;
 
-  // Zobrazit filtr
-  document.getElementById('filter-container').style.display = 'block';
-}
+    // Aktualizace tabulky
+    document.querySelector('#tabulka tbody').innerHTML = radek;
+
+    // Zobrazit filtr
+    document.getElementById('filter-container').style.display = 'block';
+
+    
+    }
 
   function exportovatHodnoty(exportType) {
     var tabulka = document.getElementById('tabulka');
