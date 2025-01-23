@@ -69,7 +69,24 @@
       text-align: center;
       margin-top: 20px;
     }
-    
+
+    .export_button-container {
+      display: flex;
+      justify-content: center;  
+      gap: 20px;  
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) { 
+      .export_button-container {
+        flex-direction: column; 
+        gap: 10px;  
+        width: auto;  
+        max-width: 250px;
+        margin: 0 auto;  
+      }
+    }
+
     button {
       width: auto;
       background-color: #4CAF50;
@@ -97,6 +114,18 @@
       margin-bottom: 20px;
       display: flex;
       justify-content: center;
+    }
+
+    @media (max-width: 768px) { /* Pro mobilní zařízení */
+      .image-container img {
+        max-width: 38%; /* Zvětší obrázek na mobilních zařízeních */
+      }
+    }
+
+    @media (min-width: 769px) { /* Pro větší obrazovky */
+      .image-container img {
+        max-width: 50%; /* Zmenší obrázek na větších obrazovkách */
+      }
     }
   </style>
 </head>
@@ -160,14 +189,13 @@
     </table>
   </div>
   
-  <div class="button-container">
+  <div class="export_button-container">
     <button onclick="exportovatHodnoty('vsechny')">Exportovat Všechny Hodnoty</button>
     <button onclick="exportovatHodnoty('filtr')">Exportovat Zobrazené Hodnoty</button>
   </div>
 </div>
 
 <script>
-  console.log("JavaScript je připojen!");
 
   function generovatTabulku() {
     var typ = document.getElementById('typ').value;
@@ -243,22 +271,34 @@
     document.getElementById('filter-container').style.display = 'block';
 
     
-    }
+  }
 
   function exportovatHodnoty(exportType) {
     var tabulka = document.getElementById('tabulka');
     var wb;
-    
+
     if (exportType === 'filtr') {
-      var filteredTable = document.createElement('table');
-      filteredTable.innerHTML = tabulka.outerHTML;
-      wb = XLSX.utils.table_to_book(filteredTable);
-    } else if (exportType === 'vsechny') {
+      // Exportuje aktuální zobrazení tabulky
       wb = XLSX.utils.table_to_book(tabulka);
+    } else if (exportType === 'vsechny') {
+      // Uloží aktuální filtr
+      var originalFilter = document.getElementById('filtr').value;
+
+      // Nastaví filtr na "all" a aktualizuje tabulku
+      document.getElementById('filtr').value = 'all';
+      generovatTabulku();
+
+      // Exportuje tabulku s "všechny" hodnoty
+      wb = XLSX.utils.table_to_book(tabulka);
+
+      // Vrátí filtr na původní hodnotu a znovu aktualizuje tabulku
+      document.getElementById('filtr').value = originalFilter;
+      generovatTabulku();
     }
 
     XLSX.writeFile(wb, 'export_hodnot.xlsx');
   }
+
 </script>
 
 </body>
