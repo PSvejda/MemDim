@@ -156,7 +156,8 @@
   
 
   <div class="button-container">
-    <button onclick="generovatTabulku()">Generovat Hodnoty</button>
+    <button onclick="generovatTabulku(); generovatObrazek()">Generovat Hodnoty</button>
+
   </div>
 
   <div class="image-container" id="image-container">
@@ -190,27 +191,30 @@
     </table>
   </div>
   
-  <div class="export_button-container">
-    <button onclick="exportovatHodnoty('vsechny')">Exportovat Všechny Hodnoty</button>
+  <div class="export_button-container" id = "export_button-container" style="display: none;">
+    <button onclick="exportovatHodnoty('vsechny')">Exportovat Všechny Hodnoty </button>
     <button onclick="exportovatHodnoty('filtr')">Exportovat Zobrazené Hodnoty</button>
   </div>
 </div>
 
 <script>
 
-  function generovatTabulku() {
-    var typ = document.getElementById('typ').value;
-    var velikost = document.getElementById('velikost').value;
-    var filtr = document.getElementById('filtr').value;
-    
+  function generovatObrazek() {
     // **Zobrazení obrázku**
+    var typ = document.getElementById('typ').value;
     var imagePath = `Pictures/${typ}.png`;
     var imageContainer = document.getElementById('image-container');
     var sectionImage = document.getElementById('section-image');
 
     sectionImage.src = imagePath;
     imageContainer.style.display = 'block';
+  }
 
+  function generovatTabulku() {
+    var typ = document.getElementById('typ').value;
+    var velikost = document.getElementById('velikost').value;
+    var filtr = document.getElementById('filtr').value;
+    
     var hmotnost, dimenze, plocha, vlastnosti, ohyb, tlak;
 
     if (velikost === '180') {
@@ -270,7 +274,7 @@
 
     // Zobrazit filtr
     document.getElementById('filter-container').style.display = 'block';
-
+    document.getElementById('export_button-container').style.display = 'flex';
     
   }
 
