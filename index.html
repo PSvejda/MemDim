@@ -11,7 +11,7 @@
       margin: 20px;
       background-color: #f4f4f4;
     }
-    
+
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -20,22 +20,22 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-    
+
     h1 {
       text-align: center;
       color: #333;
     }
-    
+
     .form-group {
       margin-bottom: 20px;
     }
-    
+
     label {
       display: block;
       font-weight: bold;
       margin-bottom: 5px;
     }
-    
+
     select, button {
       padding: 10px;
       width: 100%;
@@ -53,16 +53,22 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
+      table-layout: auto;
     }
 
     th, td {
       padding: 12px;
       text-align: center;
       border: 1px solid #ddd;
+      white-space: nowrap;
     }
 
     th {
       background-color: #f0f0f0;
+    }
+
+    td:first-child {
+      text-align: left;
     }
 
     .button-container {
@@ -117,17 +123,16 @@
       justify-content: center;
     }
 
-    @media (max-width: 768px) { /* Pro mobilní zařízení */
-      .image-container img {
-        max-width: 38%; /* Zvětší obrázek na mobilních zařízeních */
-      }
+    table tr:hover {
+      background-color: #f0e8e8; /* Šedivé pozadí při najetí */
     }
+    table#prvek-table tr td {
+        width: 50%; /* Nastaví šířku každé buňky na 50% */
+        }
+    table#prvek-table td {
+        text-align: center; /* Zarovná text na střed pro všechny buňky */
+        }
 
-    @media (min-width: 769px) { /* Pro větší obrazovky */
-      .image-container img {
-        max-width: 50%; /* Zmenší obrázek na větších obrazovkách */
-      }
-    }
   </style>
 </head>
 <body>
@@ -153,11 +158,8 @@
     </select>
   </div>
 
-  
-
   <div class="button-container">
-    <button onclick="generovatTabulku(); generovatObrazek()">Generovat Hodnoty</button>
-
+    <button onclick="generovatTabulky(); generovatObrazek()">Generovat Hodnoty</button>
   </div>
 
   <div class="image-container" id="image-container">
@@ -165,10 +167,9 @@
   </div>
 
   <!-- Filtr pro zobrazení sloupců -->
-  <!-- Filtr pro zobrazení sloupců -->
-<div class="filter-container" id="filter-container" style="display: none;">
+  <div class="filter-container" id="filter-container" style="display: none;">
     <label for="filtr">Filtr:</label>
-    <select id="filtr" onchange="generovatTabulku()">
+    <select id="filtr" onchange="generovatTabulky()">
       <option value="all">Vše</option>
       <option value="hmotnost">HMOTNOST</option>
       <option value="dimenze">DIMENZE</option>
@@ -177,30 +178,32 @@
       <option value="ohyb">OHYB</option>
       <option value="tlak">TLAK</option>
     </select>
-</div>
-  
+  </div>
 
-  <div class="table-container">
-    <table id="tabulka">
-      <thead id="tabulka-head">
-        <!-- Dynamicky se načítají nadpisy -->
-      </thead>
-      <tbody>
-        <!-- Dynamicky se načítají řádky -->
-      </tbody>
-    </table>
+  <!-- Tabulka PRVEK -->
+  <div class="table-container" id="prvek-container">
+    <table id="prvek-table"></table>
   </div>
-  
-  <div class="export_button-container" id = "export_button-container" style="display: none;">
-    <button onclick="exportovatHodnoty('vsechny')">Exportovat Všechny Hodnoty </button>
-    <button onclick="exportovatHodnoty('filtr')">Exportovat Zobrazené Hodnoty</button>
+
+  <!-- Tabulka DIMENZE -->
+  <div class="table-container" id="dimenze-container" style="display: none;">
+    <table id="dimenze-table"></table>
   </div>
+
+  <!-- Tabulka HMOTNOST -->
+  <div class="table-container" id="hmotnost-container" style="display: none;">
+    <h2>HMOTNOST</h2>
+    <table id="hmotnost-table"></table>
+  </div>
+
+<div class="export_button-container" id="export_button-container" style="display: none;">
+    <button onclick="exportovatVsechnyHodnoty()">Exportovat Všechny Hodnoty</button>
+    <button onclick="exportovatHodnotyPodleFiltru()">Exportovat Zobrazené Hodnoty</button>
 </div>
+
 
 <script>
-
   function generovatObrazek() {
-    // **Zobrazení obrázku**
     var typ = document.getElementById('typ').value;
     var imagePath = `Pictures/${typ}.png`;
     var imageContainer = document.getElementById('image-container');
@@ -210,101 +213,171 @@
     imageContainer.style.display = 'block';
   }
 
-  function generovatTabulku() {
+  function generovatTabulky() {
     var typ = document.getElementById('typ').value;
     var velikost = document.getElementById('velikost').value;
     var filtr = document.getElementById('filtr').value;
-    
-    var hmotnost, dimenze, plocha, vlastnosti, ohyb, tlak;
 
+    var hmotnost, dimenze, prvek, plocha, vlastnosti, ohyb, tlak;
+
+    // Nastavení dat podle velikosti
     if (velikost === '180') {
       hmotnost = "80";
-      dimenze = ["180", "180", "10", "20", "20"];
+      prvek = [
+        { nazev: "Název prvku", hodnota: "Prvek 1" },
+        { nazev: "Typ materiálu", hodnota: "Ocel" }
+      ];
+      dimenze = [
+        { nazev: "Délka stojiny", znacka: "h", hodnota: "10", jednotky: "mm" },
+        { nazev: "Šířka příruby", znacka: "b", hodnota: "20", jednotky: "mm" },
+        { nazev: "Tloušťka příruby", znacka: "t", hodnota: "10", jednotky: "mm" }
+      ];
       plocha = ["18000", "9000"];
       vlastnosti = ["25000", "1000", "1200", "5", "20000", "800", "950", "4", "300", "1500"];
       ohyb = ["1", "1", "1", "1"];
       tlak = ["1", "1", "1", "1"];
     } else if (velikost === '250') {
       hmotnost = "90";
-      dimenze = ["250", "250", "12", "24", "22"];
+      prvek = [
+        { nazev: "Název prvku", hodnota: "Prvek 2" },
+        { nazev: "Typ materiálu", hodnota: "Hliník" }
+      ];
+      dimenze = [
+        { nazev: "Délka stojiny", znacka: "h", hodnota: "12", jednotky: "mm" },
+        { nazev: "Šířka příruby", znacka: "b", hodnota: "24", jednotky: "mm" },
+        { nazev: "Tloušťka příruby", znacka: "t", hodnota: "12", jednotky: "mm" }
+      ];
       plocha = ["30000", "15000"];
       vlastnosti = ["50000", "2000", "2400", "6", "40000", "1600", "1900", "5", "600", "3000"];
       ohyb = ["1", "1", "1", "1"];
       tlak = ["1", "1", "1", "1"];
     } else if (velikost === '360') {
       hmotnost = "100";
-      dimenze = ["360", "360", "16", "30", "30"];
+      prvek = [
+        { nazev: "Název prvku", hodnota: "Prvek 3" },
+        { nazev: "Typ materiálu", hodnota: "Bronz" }
+      ];
+      dimenze = [
+        { nazev: "Délka stojiny", znacka: "h", hodnota: "16", jednotky: "mm" },
+        { nazev: "Šířka příruby", znacka: "b", hodnota: "30", jednotky: "mm" },
+        { nazev: "Tloušťka příruby", znacka: "t", hodnota: "16", jednotky: "mm" }
+      ];
       plocha = ["50000", "25000"];
       vlastnosti = ["100000", "4000", "4800", "7", "80000", "3200", "3800", "6", "900", "4500"];
       ohyb = ["1", "1", "1", "1"];
       tlak = ["1", "1", "1", "1"];
     }
 
-    // Dynamické nadpisy
-    var tabulkaHead = document.getElementById('tabulka-head');
-    var headerRow = `<tr><th rowspan="2" colspan="2">PRVEK</th>`;
-    if (filtr === 'all' || filtr === 'hmotnost') headerRow += `<th rowspan="1">HMOTNOST</th>`;
-    if (filtr === 'all' || filtr === 'dimenze') headerRow += `<th colspan="5">DIMENZE</th>`;
-    if (filtr === 'all' || filtr === 'plocha') headerRow += `<th colspan="2">PLOCHA</th>`;
-    if (filtr === 'all' || filtr === 'vlastnosti') headerRow += `<th colspan="10">VLASTNOSTI</th>`;
-    if (filtr === 'all' || filtr === 'ohyb') headerRow += `<th colspan="4">OHYB</th>`;
-    if (filtr === 'all' || filtr === 'tlak') headerRow += `<th colspan="4">TLAK</th>`;
-    headerRow += `</tr><tr>`;
-    if (filtr === 'all' || filtr === 'hmotnost') headerRow += `<th>G (kg/m)</th>`;
-    if (filtr === 'all' || filtr === 'dimenze') headerRow += `<th>h (mm)</th><th>b (mm)</th><th>tw (mm)</th><th>tf (mm)</th><th>r (mm)</th>`;
-    if (filtr === 'all' || filtr === 'plocha') headerRow += `<th>A (mm²)</th><th>Avz (mm²)</th>`;
-    if (filtr === 'all' || filtr === 'vlastnosti') headerRow += `<th>Iy (mm⁴)</th><th>Wy (mm³)</th><th>Wpl,y (mm³)</th><th>iy (mm)</th><th>Iz (mm⁴)</th><th>Wz (mm³)</th><th>Wpl,z (mm³)</th><th>iz (mm)</th><th>It (mm⁴)</th><th>Wt (mm³)</th>`;
-    if (filtr === 'all' || filtr === 'ohyb') headerRow += `<th>My (kNm)</th><th>Mz (kNm)</th><th>Mt (kNm)</th><th>Vy (kN)</th>`;
-    if (filtr === 'all' || filtr === 'tlak') headerRow += `<th>Py (kN)</th><th>Pz (kN)</th><th>Pt (kN)</th><th>P (kN)</th>`;
-    headerRow += `</tr>`;
-    tabulkaHead.innerHTML = headerRow;
+    // Zobrazení tabulky PRVEK (vždy zobrazená)
+    var prvekTable = `
+      <tr>
+        <th colspan=2>PRVEK</th>
+      </tr>
+    `;
+    prvek.forEach(function (item) {
+      prvekTable += `
+        <tr>
+          <td>${item.nazev}</td>
+          <td>${item.hodnota}</td>
+        </tr>
+      `;
+    });
+    document.getElementById('prvek-table').innerHTML = prvekTable;
 
-    // Dynamické řádky
-    var radek = `<tr><td>${typ}</td><td>${velikost}</td>`;
-    if (filtr === 'all' || filtr === 'hmotnost') radek += `<td>${hmotnost}</td>`;
-    if (filtr === 'all' || filtr === 'dimenze') radek += `<td>${dimenze.join('</td><td>')}</td>`;
-    if (filtr === 'all' || filtr === 'plocha') radek += `<td>${plocha.join('</td><td>')}</td>`;
-    if (filtr === 'all' || filtr === 'vlastnosti') radek += `<td>${vlastnosti.join('</td><td>')}</td>`;
-    if (filtr === 'all' || filtr === 'ohyb') radek += `<td>${ohyb.join('</td><td>')}</td>`;
-    if (filtr === 'all' || filtr === 'tlak') radek += `<td>${tlak.join('</td><td>')}</td>`;
-    radek += `</tr>`;
-
-    // Aktualizace tabulky
-    document.querySelector('#tabulka tbody').innerHTML = radek;
-
-    // Zobrazit filtr
-    document.getElementById('filter-container').style.display = 'block';
-    document.getElementById('export_button-container').style.display = 'flex';
-    
-  }
-
-  function exportovatHodnoty(exportType) {
-    var tabulka = document.getElementById('tabulka');
-    var wb;
-
-    if (exportType === 'filtr') {
-      // Exportuje aktuální zobrazení tabulky
-      wb = XLSX.utils.table_to_book(tabulka);
-    } else if (exportType === 'vsechny') {
-      // Uloží aktuální filtr
-      var originalFilter = document.getElementById('filtr').value;
-
-      // Nastaví filtr na "all" a aktualizuje tabulku
-      document.getElementById('filtr').value = 'all';
-      generovatTabulku();
-
-      // Exportuje tabulku s "všechny" hodnoty
-      wb = XLSX.utils.table_to_book(tabulka);
-
-      // Vrátí filtr na původní hodnotu a znovu aktualizuje tabulku
-      document.getElementById('filtr').value = originalFilter;
-      generovatTabulku();
+    // Zobrazení tabulek podle filtru
+    if (filtr === 'all' || filtr === 'dimenze') {
+      document.getElementById('dimenze-container').style.display = 'block';
+      var dimenzeTable = `
+        <tr>
+          <th colspan=4>DIMENZE</th>
+        </tr>
+        <tr>
+          <th>Název</th>
+          <th>Značka</th>
+          <th>Hodnota</th>
+          <th>Jednotky</th>
+        </tr>
+      `;
+      dimenze.forEach(function (item) {
+        dimenzeTable += `
+          <tr>
+            <td>${item.nazev}</td>
+            <td>${item.znacka}</td>
+            <td>${item.hodnota}</td>
+            <td>${item.jednotky}</td>
+          </tr>
+        `;
+      });
+      document.getElementById('dimenze-table').innerHTML = dimenzeTable;
+    } else {
+      document.getElementById('dimenze-container').style.display = 'none';
     }
 
-    XLSX.writeFile(wb, 'export_hodnot.xlsx');
+    if (filtr === 'all' || filtr === 'hmotnost') {
+      document.getElementById('hmotnost-container').style.display = 'block';
+      document.getElementById('hmotnost-table').innerHTML = `<tr><td>${hmotnost}</td></tr>`;
+    } else {
+      document.getElementById('hmotnost-container').style.display = 'none';
+    }
+
+    // Zobrazit filtr a tlačítka pro export
+    document.getElementById('filter-container').style.display = 'block';
+    document.getElementById('export_button-container').style.display = 'flex';
   }
 
-/* #gg */
+  // Funkce pro export podle filtru
+function exportovatHodnotyPodleFiltru() {
+    var wb = XLSX.utils.book_new();
+    
+    // Vždy exportujeme tabulku PRVEK
+    wb.SheetNames.push('PRVEK');
+    wb.Sheets['PRVEK'] = XLSX.utils.table_to_sheet(document.getElementById('prvek-table'));
+
+    // Export pouze zobrazených tabulek podle filtru
+    if (document.getElementById('hmotnost-container').style.display === 'block') {
+        wb.SheetNames.push('HMOTNOST');
+        wb.Sheets['HMOTNOST'] = XLSX.utils.table_to_sheet(document.getElementById('hmotnost-table'));
+    }
+    if (document.getElementById('dimenze-container').style.display === 'block') {
+        wb.SheetNames.push('DIMENZE');
+        wb.Sheets['DIMENZE'] = XLSX.utils.table_to_sheet(document.getElementById('dimenze-table'));
+    }
+
+    // Export do Excel
+    XLSX.writeFile(wb, 'Prurez_export_filtr.xlsx');
+}
+
+function exportovatVsechnyHodnoty() {
+    var wb = XLSX.utils.book_new();
+
+    // Seznam všech tabulek, které chceme exportovat
+    var tabulky = [
+        { id: 'prvek-table', nazev: 'PRVEK' },
+        { id: 'hmotnost-table', nazev: 'HMOTNOST' },
+        { id: 'dimenze-table', nazev: 'DIMENZE' },
+        { id: 'plocha-table', nazev: 'PLOCHA' },
+        { id: 'vlastnosti-table', nazev: 'VLASTNOSTI' },
+        { id: 'ohyb-table', nazev: 'OHYB' },
+        { id: 'tlak-table', nazev: 'TLAK' }
+    ];
+
+    // Projdeme všechny tabulky a přidáme je do exportu
+    tabulky.forEach(function(tabulka) {
+        var element = document.getElementById(tabulka.id);
+        if (element) {
+            wb.SheetNames.push(tabulka.nazev);
+            wb.Sheets[tabulka.nazev] = XLSX.utils.table_to_sheet(element);
+        }
+    });
+
+    // Export do Excelu
+    XLSX.writeFile(wb, 'Prurez_export_vsechny.xlsx');
+}
+
+
+
+
+
 </script>
 
 </body>
