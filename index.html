@@ -132,7 +132,18 @@
     table#prvek-table td {
         text-align: center; /* Zarovná text na střed pro všechny buňky */
         }
+        
+    @media (max-width: 768px) { /* Pro mobilní zařízení */
+      .image-container img {
+        max-width: 38%; /* Zvětší obrázek na mobilních zařízeních */
+      }
+    }
 
+    @media (min-width: 769px) { /* Pro větší obrazovky */
+      .image-container img {
+        max-width: 50%; /* Zmenší obrázek na větších obrazovkách */
+      }
+    }
   </style>
 </head>
 <body>
