@@ -157,15 +157,15 @@
         text-align: center;
     }
 
-    @media (max-width: 768px) { /* Pro mobilní zařízení */
+    @media (max-width: 768px) and (max-height: 500px) { /* Pro mobilní zařízení */
       .image-container img {
-        max-width: 38%; /* Zvětší obrázek na mobilních zařízeních */
+        max-width: 38%;
       }
     }
 
     @media (min-width: 769px) { /* Pro větší obrazovky */
       .image-container img {
-        max-width: 50%; /* Zmenší obrázek na větších obrazovkách */
+        max-width: 50%; 
       }
     }
   </style>
