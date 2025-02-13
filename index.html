@@ -71,6 +71,29 @@
       text-align: left;
     }
 
+
+    table:not(#tlak-table):not(#ohyb-table):not(#prvek-table) td:nth-child(1),
+    table:not(#tlak-table):not(#ohyb-table):not(#prvek-table) th:nth-child(1) {
+      width: 30%; /* 2 parts */
+    }
+
+    table:not(#tlak-table):not(#ohyb-table):not(#prvek-table) td:nth-child(2),
+    table:not(#tlak-table):not(#ohyb-table):not(#prvek-table) th:nth-child(2) {
+      width: 20%; /* 1 part */
+    }
+
+    table:not(#tlak-table):not(#ohyb-table):not(#prvek-table) td:nth-child(3),
+    table:not(#tlak-table):not(#ohyb-table):not(#prvek-table) th:nth-child(3) {
+      width: 20%; /* 1 part */
+    }
+
+    table:not(#tlak-table):not(#ohyb-table):not(#prvek-table) td:nth-child(4),
+    table:not(#tlak-table):not(#ohyb-table):not(#prvek-table) th:nth-child(4) {
+      width: 20%; /* 1 part */
+    }
+
+
+
     .button-container {
       text-align: center;
       margin-top: 20px;
@@ -129,10 +152,11 @@
     table#prvek-table tr td {
         width: 50%; /* Nastaví šířku každé buňky na 50% */
         }
-    table#prvek-table td {
-        text-align: center; /* Zarovná text na střed pro všechny buňky */
-        }
-        
+    /* Zarovná text na střed pro všechny buňky v tabulkách PRVEK a TLAK */
+    #prvek-table td, #tlak-table td, #ohyb-table td {
+        text-align: center;
+    }
+
     @media (max-width: 768px) { /* Pro mobilní zařízení */
       .image-container img {
         max-width: 38%; /* Zvětší obrázek na mobilních zařízeních */
@@ -220,9 +244,6 @@
     <table id="tlak-table"></table>
   </div>
 
-
-
-
 <div class="export_button-container" id="export_button-container" style="display: none;">
     <button onclick="exportovatVsechnyHodnoty()">Exportovat Všechny Hodnoty</button>
     <button onclick="exportovatHodnotyPodleFiltru()">Exportovat Zobrazené Hodnoty</button>
@@ -266,7 +287,7 @@
       ];
 
       vlastnosti = [
-        { nazev: "moment 1", znacka: "Iy", hodnota: "10", jednotky: "mm" },
+        { nazev: "moment hggzhcccccccccccccccc", znacka: "Iy", hodnota: "10", jednotky: "mm" },
         { nazev: "moment 1", znacka: "Wy", hodnota: "20", jednotky: "mm" },
         { nazev: "moment 1", znacka: "Wpl,y", hodnota: "10", jednotky: "mm" },
         { nazev: "moment 1", znacka: "iy", hodnota: "20", jednotky: "mm" },
@@ -291,39 +312,6 @@
         { nazev: "S355",  hodnota: "1" },
         { nazev: "S460",  hodnota: "1" }
       ];
-
-
-
-    } else if (velikost === '250') {
-      hmotnost = "90";
-      prvek = [
-        { nazev: "Název prvku", hodnota: "Prvek 2" },
-        { nazev: "Typ materiálu", hodnota: "Hliník" }
-      ];
-      dimenze = [
-        { nazev: "Délka stojiny", znacka: "h", hodnota: "12", jednotky: "mm" },
-        { nazev: "Šířka příruby", znacka: "b", hodnota: "24", jednotky: "mm" },
-        { nazev: "Tloušťka příruby", znacka: "t", hodnota: "12", jednotky: "mm" }
-      ];
-      plocha = ["30000", "15000"];
-      vlastnosti = ["50000", "2000", "2400", "6", "40000", "1600", "1900", "5", "600", "3000"];
-      ohyb = ["1", "1", "1", "1"];
-      tlak = ["1", "1", "1", "1"];
-    } else if (velikost === '360') {
-      hmotnost = "100";
-      prvek = [
-        { nazev: "Název prvku", hodnota: "Prvek 3" },
-        { nazev: "Typ materiálu", hodnota: "Bronz" }
-      ];
-      dimenze = [
-        { nazev: "Délka stojiny", znacka: "h", hodnota: "16", jednotky: "mm" },
-        { nazev: "Šířka příruby", znacka: "b", hodnota: "30", jednotky: "mm" },
-        { nazev: "Tloušťka příruby", znacka: "t", hodnota: "16", jednotky: "mm" }
-      ];
-      plocha = ["50000", "25000"];
-      vlastnosti = ["100000", "4000", "4800", "7", "80000", "3200", "3800", "6", "900", "4500"];
-      ohyb = ["1", "1", "1", "1"];
-      tlak = ["1", "1", "1", "1"];
     }
 
     // Zobrazení tabulky PRVEK (vždy zobrazená)
@@ -489,6 +477,8 @@
     // Zobrazit filtr a tlačítka pro export
     document.getElementById('filter-container').style.display = 'block';
     document.getElementById('export_button-container').style.display = 'flex';
+
+    
   }
 
 function exportovatHodnotyPodleFiltru() {
