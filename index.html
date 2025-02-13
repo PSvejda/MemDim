@@ -266,37 +266,39 @@
     var velikost = document.getElementById('velikost').value;
     var filtr = document.getElementById('filtr').value;
 
-    var hmotnost, dimenze, prvek, plocha, vlastnosti, ohyb, tlak;
+    var dimenze, prvek, plocha, vlastnosti, ohyb, tlak;
 
     // Nastavení dat podle velikosti
     if (velikost === '180') {
-      hmotnost = "80";
       prvek = [
-        { nazev: "Název prvku", hodnota: "Prvek 1" },
-        { nazev: "Typ materiálu", hodnota: "Ocel" },
-        { nazev: "Hmotnost", hodnota: "800 kg/m" }
+        { nazev: "Typ prvku", hodnota: "IPE" },
+        { nazev: "Velikost", hodnota: "180" },
+        { nazev: "Hmotnost", hodnota: "800" }
       ];
       dimenze = [
-        { nazev: "Délka stojiny", znacka: "h", hodnota: "10", jednotky: "mm" },
-        { nazev: "Šířka příruby", znacka: "b", hodnota: "20", jednotky: "mm" },
-        { nazev: "Tloušťka příruby", znacka: "t", hodnota: "10", jednotky: "mm" }
+        { nazev: "Výška průřezu", znacka: "h", hodnota: "10", jednotky: "mm" },
+        { nazev: "Šířka průřezu", znacka: "b", hodnota: "20", jednotky: "mm" },
+        { nazev: "Tloušťka stojiny", znacka: "tw", hodnota: "10", jednotky: "mm" },
+        { nazev: "Tloušťka pásnice", znacka: "tf", hodnota: "20", jednotky: "mm" },
+        { nazev: "Poloměr zakřivení", znacka: "r", hodnota: "20", jednotky: "mm" },
+        { nazev: "Výška stěny mezi zaoblením", znacka: "d", hodnota: "20", jednotky: "mm" }
       ];
       plocha = [
-        { nazev: "Plocha", znacka: "A", hodnota: "10", jednotky: "mm2" },
+        { nazev: "Průřezová plocha", znacka: "A", hodnota: "10", jednotky: "mm2" },
         { nazev: "Smyková plocha", znacka: "Avz", hodnota: "20", jednotky: "mm2" }
       ];
 
       vlastnosti = [
-        { nazev: "moment hggzhcccccccccccccccc", znacka: "Iy", hodnota: "10", jednotky: "mm" },
-        { nazev: "moment 1", znacka: "Wy", hodnota: "20", jednotky: "mm" },
-        { nazev: "moment 1", znacka: "Wpl,y", hodnota: "10", jednotky: "mm" },
-        { nazev: "moment 1", znacka: "iy", hodnota: "20", jednotky: "mm" },
-        { nazev: "moment 1", znacka: "Iz", hodnota: "20", jednotky: "mm" },
-        { nazev: "moment 1", znacka: "Wz", hodnota: "20", jednotky: "mm" },
-        { nazev: "moment 1", znacka: "Wpl,z", hodnota: "20", jednotky: "mm" },
-        { nazev: "moment 1", znacka: "iz", hodnota: "20", jednotky: "mm" },
-        { nazev: "moment 1", znacka: "It", hodnota: "20", jednotky: "mm" },
-        { nazev: "moment 1", znacka: "Iw", hodnota: "20", jednotky: "mm" }
+        { nazev: "Moment setrvačnosti kolem osy y", znacka: "Iy", hodnota: "10", jednotky: "mm" },
+        { nazev: "Pružný průřezový modul kolem osy y", znacka: "Wy", hodnota: "20", jednotky: "mm" },
+        { nazev: "Plastický průřezový modul kolem osy y", znacka: "Wpl,y", hodnota: "10", jednotky: "mm" },
+        { nazev: "Poloměr setrvačnosti kolem osy y", znacka: "iy", hodnota: "20", jednotky: "mm" },
+        { nazev: "Moment setrvačnosti kolem osy z", znacka: "Iz", hodnota: "20", jednotky: "mm" },
+        { nazev: "Pružný průřezový modul kolem osy z", znacka: "Wz", hodnota: "20", jednotky: "mm" },
+        { nazev: "Plastický průřezový modul kolem osy z", znacka: "Wpl,z", hodnota: "20", jednotky: "mm" },
+        { nazev: "Poloměr setrvačnosti kolem osy z", znacka: "iz", hodnota: "20", jednotky: "mm" },
+        { nazev: "Moment setrvačnosti ve volném kroucení", znacka: "It", hodnota: "20", jednotky: "mm" },
+        { nazev: "Výsečový moment setrvačnosti", znacka: "Iw", hodnota: "20", jednotky: "mm" }
 
       ];
       ohyb = [
