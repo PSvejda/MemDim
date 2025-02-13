@@ -182,7 +182,6 @@
     <label for="filtr">Filtr:</label>
     <select id="filtr" onchange="generovatTabulky()">
       <option value="all">Vše</option>
-      <option value="hmotnost">HMOTNOST</option>
       <option value="dimenze">DIMENZE</option>
       <option value="plocha">PLOCHA</option>
       <option value="vlastnosti">VLASTNOSTI</option>
@@ -201,11 +200,28 @@
     <table id="dimenze-table"></table>
   </div>
 
-  <!-- Tabulka HMOTNOST -->
-  <div class="table-container" id="hmotnost-container" style="display: none;">
-    <h2>HMOTNOST</h2>
-    <table id="hmotnost-table"></table>
+  <!-- Tabulka PLOCHA -->
+  <div class="table-container" id="plocha-container" style="display: none;">
+    <table id="plocha-table"></table>
   </div>
+
+  <!-- Tabulka VLASTNOSTI -->
+  <div class="table-container" id="vlastnosti-container" style="display: none;">
+    <table id="vlastnosti-table"></table>
+  </div>
+
+  <!-- Tabulka OHYB -->
+  <div class="table-container" id="ohyb-container" style="display: none;">
+    <table id="ohyb-table"></table>
+  </div>
+
+  <!-- Tabulka TLAK -->
+  <div class="table-container" id="tlak-container" style="display: none;">
+    <table id="tlak-table"></table>
+  </div>
+
+
+
 
 <div class="export_button-container" id="export_button-container" style="display: none;">
     <button onclick="exportovatVsechnyHodnoty()">Exportovat Všechny Hodnoty</button>
@@ -236,17 +252,48 @@
       hmotnost = "80";
       prvek = [
         { nazev: "Název prvku", hodnota: "Prvek 1" },
-        { nazev: "Typ materiálu", hodnota: "Ocel" }
+        { nazev: "Typ materiálu", hodnota: "Ocel" },
+        { nazev: "Hmotnost", hodnota: "800 kg/m" }
       ];
       dimenze = [
         { nazev: "Délka stojiny", znacka: "h", hodnota: "10", jednotky: "mm" },
         { nazev: "Šířka příruby", znacka: "b", hodnota: "20", jednotky: "mm" },
         { nazev: "Tloušťka příruby", znacka: "t", hodnota: "10", jednotky: "mm" }
       ];
-      plocha = ["18000", "9000"];
-      vlastnosti = ["25000", "1000", "1200", "5", "20000", "800", "950", "4", "300", "1500"];
-      ohyb = ["1", "1", "1", "1"];
-      tlak = ["1", "1", "1", "1"];
+      plocha = [
+        { nazev: "Plocha", znacka: "A", hodnota: "10", jednotky: "mm2" },
+        { nazev: "Smyková plocha", znacka: "Avz", hodnota: "20", jednotky: "mm2" }
+      ];
+
+      vlastnosti = [
+        { nazev: "moment 1", znacka: "Iy", hodnota: "10", jednotky: "mm" },
+        { nazev: "moment 1", znacka: "Wy", hodnota: "20", jednotky: "mm" },
+        { nazev: "moment 1", znacka: "Wpl,y", hodnota: "10", jednotky: "mm" },
+        { nazev: "moment 1", znacka: "iy", hodnota: "20", jednotky: "mm" },
+        { nazev: "moment 1", znacka: "Iz", hodnota: "20", jednotky: "mm" },
+        { nazev: "moment 1", znacka: "Wz", hodnota: "20", jednotky: "mm" },
+        { nazev: "moment 1", znacka: "Wpl,z", hodnota: "20", jednotky: "mm" },
+        { nazev: "moment 1", znacka: "iz", hodnota: "20", jednotky: "mm" },
+        { nazev: "moment 1", znacka: "It", hodnota: "20", jednotky: "mm" },
+        { nazev: "moment 1", znacka: "Iw", hodnota: "20", jednotky: "mm" }
+
+      ];
+      ohyb = [
+        { nazev: "S235",  hodnota: "1" },
+        { nazev: "S275",  hodnota: "2" },
+        { nazev: "S355",  hodnota: "1" },
+        { nazev: "S460",  hodnota: "1" }
+      ];
+
+      tlak = [
+        { nazev: "S235",  hodnota: "1" },
+        { nazev: "S275",  hodnota: "2" },
+        { nazev: "S355",  hodnota: "1" },
+        { nazev: "S460",  hodnota: "1" }
+      ];
+
+
+
     } else if (velikost === '250') {
       hmotnost = "90";
       prvek = [
@@ -324,66 +371,196 @@
       document.getElementById('dimenze-container').style.display = 'none';
     }
 
-    if (filtr === 'all' || filtr === 'hmotnost') {
-      document.getElementById('hmotnost-container').style.display = 'block';
-      document.getElementById('hmotnost-table').innerHTML = `<tr><td>${hmotnost}</td></tr>`;
+    if (filtr === 'all' || filtr === 'plocha') {
+      document.getElementById('plocha-container').style.display = 'block';
+      var plochaTable = `
+        <tr>
+          <th colspan=4>PLOCHA</th>
+        </tr>
+        <tr>
+          <th>Název</th>
+          <th>Značka</th>
+          <th>Hodnota</th>
+          <th>Jednotky</th>
+        </tr>
+      `;
+      plocha.forEach(function (item) {
+        plochaTable += `
+          <tr>
+            <td>${item.nazev}</td>
+            <td>${item.znacka}</td>
+            <td>${item.hodnota}</td>
+            <td>${item.jednotky}</td>
+          </tr>
+        `;
+      });
+      document.getElementById('plocha-table').innerHTML = plochaTable;
     } else {
-      document.getElementById('hmotnost-container').style.display = 'none';
+      document.getElementById('plocha-container').style.display = 'none';
     }
+
+    if (filtr === 'all' || filtr === 'vlastnosti') {
+      document.getElementById('vlastnosti-container').style.display = 'block';
+      var vlastnostiTable = `
+        <tr>
+          <th colspan=4>VLASTNOSTI</th>
+        </tr>
+        <tr>
+          <th>Název</th>
+          <th>Značka</th>
+          <th>Hodnota</th>
+          <th>Jednotky</th>
+        </tr>
+      `;
+      vlastnosti.forEach(function (item) {
+        vlastnostiTable += `
+          <tr>
+            <td>${item.nazev}</td>
+            <td>${item.znacka}</td>
+            <td>${item.hodnota}</td>
+            <td>${item.jednotky}</td>
+          </tr>
+        `;
+      });
+      document.getElementById('vlastnosti-table').innerHTML = vlastnostiTable;
+    } else {
+      document.getElementById('vlastnosti-container').style.display = 'none';
+    }
+
+
+    if (filtr === 'all' || filtr === 'ohyb') {
+        document.getElementById('ohyb-container').style.display = 'block';
+        
+        var ohybTable = `
+            <tr>
+              <th colspan="4">OHYB</th>
+            </tr>
+            <tr>
+              <th>S235</th>
+              <th>S275</th>
+              <th>S355</th>
+              <th>S460</th>
+            </tr>
+            <tr>
+              <td>${ohyb.find(item => item.nazev === "S235")?.hodnota}</td>
+              <td>${ohyb.find(item => item.nazev === "S275")?.hodnota}</td>
+              <td>${ohyb.find(item => item.nazev === "S355")?.hodnota}</td>
+              <td>${ohyb.find(item => item.nazev === "S460")?.hodnota}</td>
+            </tr>
+        `;
+        
+        document.getElementById('ohyb-table').innerHTML = ohybTable;
+    } else {
+        document.getElementById('ohyb-container').style.display = 'none';
+    }
+
+    if (filtr === 'all' || filtr === 'tlak') {
+        document.getElementById('tlak-container').style.display = 'block';
+        
+        var tlakTable = `
+            <tr>
+              <th colspan="4">TLAK</th>
+            </tr>
+            <tr>
+              <th>S235</th>
+              <th>S275</th>
+              <th>S355</th>
+              <th>S460</th>
+            </tr>
+            <tr>
+              <td>${tlak.find(item => item.nazev === "S235")?.hodnota || "-"}</td>
+              <td>${tlak.find(item => item.nazev === "S275")?.hodnota || "-"}</td>
+              <td>${tlak.find(item => item.nazev === "S355")?.hodnota || "-"}</td>
+              <td>${tlak.find(item => item.nazev === "S460")?.hodnota || "-"}</td>
+            </tr>
+        `;
+        
+        document.getElementById('tlak-table').innerHTML = tlakTable;
+    } else {
+        document.getElementById('tlak-container').style.display = 'none';
+    }
+
+
+
+
+
+
 
     // Zobrazit filtr a tlačítka pro export
     document.getElementById('filter-container').style.display = 'block';
     document.getElementById('export_button-container').style.display = 'flex';
   }
 
-  // Funkce pro export podle filtru
 function exportovatHodnotyPodleFiltru() {
-    var wb = XLSX.utils.book_new();
-    
-    // Vždy exportujeme tabulku PRVEK
-    wb.SheetNames.push('PRVEK');
-    wb.Sheets['PRVEK'] = XLSX.utils.table_to_sheet(document.getElementById('prvek-table'));
+  var wb = XLSX.utils.book_new();
+  
+  // Získáme tabulku PRVEK
+  var prvekTable = document.getElementById('prvek-table');
+  
+  // Vytvoříme list, který bude obsahovat všechny tabulky
+  var sheet = [];
 
-    // Export pouze zobrazených tabulek podle filtru
-    if (document.getElementById('hmotnost-container').style.display === 'block') {
-        wb.SheetNames.push('HMOTNOST');
-        wb.Sheets['HMOTNOST'] = XLSX.utils.table_to_sheet(document.getElementById('hmotnost-table'));
-    }
-    if (document.getElementById('dimenze-container').style.display === 'block') {
-        wb.SheetNames.push('DIMENZE');
-        wb.Sheets['DIMENZE'] = XLSX.utils.table_to_sheet(document.getElementById('dimenze-table'));
-    }
+  // Přidáme PRVEK tabulku
+  sheet = sheet.concat(XLSX.utils.sheet_to_json(XLSX.utils.table_to_sheet(prvekTable), {header: 1}));
 
-    // Export do Excel
-    XLSX.writeFile(wb, 'Prurez_export_filtr.xlsx');
+  // Seznam všech kontejnerů a jejich tabulek
+  var containers = [
+      {containerId: 'dimenze-container', tableId: 'dimenze-table'},
+      {containerId: 'plocha-container', tableId: 'plocha-table'},
+      {containerId: 'vlastnosti-container', tableId: 'vlastnosti-table'},
+      {containerId: 'ohyb-container', tableId: 'ohyb-table'},
+      {containerId: 'tlak-container', tableId: 'tlak-table'}
+  ];
+
+  // Procházení všech kontejnerů
+  containers.forEach(function(container) {
+      var containerElement = document.getElementById(container.containerId);
+      var tableElement = document.getElementById(container.tableId);
+      
+      // Pokud je kontejner viditelný, přidáme odpovídající tabulku
+      if (containerElement.style.display === 'block' && tableElement) {
+          sheet.push([]);  // Přidáme prázdný řádek mezi tabulkami pro lepší přehlednost
+          sheet = sheet.concat(XLSX.utils.sheet_to_json(XLSX.utils.table_to_sheet(tableElement), {header: 1}));
+      }
+  });
+
+  // Přidáme obsah na jeden list
+  wb.SheetNames.push('Tabulky');
+  wb.Sheets['Tabulky'] = XLSX.utils.aoa_to_sheet(sheet);
+
+  // Export do Excel
+  XLSX.writeFile(wb, 'Prurez_export_filtr.xlsx');
 }
+
+
 
 function exportovatVsechnyHodnoty() {
-    var wb = XLSX.utils.book_new();
+  var wb = XLSX.utils.book_new();
+  var ws_data = [];
+  var tables = ["prvek-table", "dimenze-table", "plocha-table", "vlastnosti-table", "ohyb-table", "tlak-table"];
 
-    // Seznam všech tabulek, které chceme exportovat
-    var tabulky = [
-        { id: 'prvek-table', nazev: 'PRVEK' },
-        { id: 'hmotnost-table', nazev: 'HMOTNOST' },
-        { id: 'dimenze-table', nazev: 'DIMENZE' },
-        { id: 'plocha-table', nazev: 'PLOCHA' },
-        { id: 'vlastnosti-table', nazev: 'VLASTNOSTI' },
-        { id: 'ohyb-table', nazev: 'OHYB' },
-        { id: 'tlak-table', nazev: 'TLAK' }
-    ];
+  tables.forEach((tableId, index) => {
+      var table = document.getElementById(tableId);
+      if (table && table.style.display !== "none") {
+          var rows = table.rows;
+          for (var i = 0; i < rows.length; i++) {
+              var row = [];
+              for (var j = 0; j < rows[i].cells.length; j++) {
+                  row.push(rows[i].cells[j].innerText);
+              }
+              ws_data.push(row);
+          }
+          if (index < tables.length - 1) {
+              ws_data.push([]); // Přidání prázdného řádku mezi tabulkami
+          }
+      }
+  });
 
-    // Projdeme všechny tabulky a přidáme je do exportu
-    tabulky.forEach(function(tabulka) {
-        var element = document.getElementById(tabulka.id);
-        if (element) {
-            wb.SheetNames.push(tabulka.nazev);
-            wb.Sheets[tabulka.nazev] = XLSX.utils.table_to_sheet(element);
-        }
-    });
-
-    // Export do Excelu
-    XLSX.writeFile(wb, 'Prurez_export_vsechny.xlsx');
+  var ws = XLSX.utils.aoa_to_sheet(ws_data);
+  XLSX.utils.book_append_sheet(wb, ws, "Data");
+  XLSX.writeFile(wb, "Vystup.xlsx");
 }
+
 
 
 
