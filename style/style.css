@@ -1,11 +1,11 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 30px;
     background-color: #f4f4f4;
   }
 
 .container {
-max-width: 1200px;
+max-width: 100%;
 margin: 0 auto;
 background-color: white;
 padding: 20px;
@@ -164,6 +164,7 @@ table#prvek-table tr td {
 .image-container img {  
     max-width: 28%; /* Plná šířka na velmi malých displejích */  
 }  
+
 }  
 
 
@@ -171,6 +172,9 @@ table#prvek-table tr td {
 .image-container img {  
     max-width: 28%; /* Mírná rezerva pro malé telefony */  
 }  
+.container {
+    width: 83%; /* Pro desktopová zobrazení */
+}
 }  
 
 @media (min-width: 481px) and (max-width: 768px) and (max-height: 230px) {  
@@ -185,8 +189,13 @@ table#prvek-table tr td {
 }  
 }  
 
-@media (min-width: 769px) {  
+@media (min-width: 769px)  {  
 .image-container img {  
     max-width: 25%; /* Desktopové zobrazení, menší obrázky pro lepší rozložení */  
 }  
+.container {
+    width: 70%; /* Pro desktopová zobrazení */
+}
+
 }  
+
