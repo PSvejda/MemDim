@@ -64,7 +64,7 @@ function generovatObrazek() {
                   dimenze.push({ nazev: "Šířka průřezu", znacka: "b", hodnota: sheet[`E${row}`].v, jednotky: "mm" });
                   dimenze.push({ nazev: "Tloušťka stojiny", znacka: "t<sub>w</sub>", hodnota: sheet[`F${row}`].v, jednotky: "mm" });
                   dimenze.push({ nazev: "Tloušťka pásnice", znacka: "t<sub>f</sub>", hodnota: sheet[`G${row}`].v, jednotky: "mm" });
-                  dimenze.push({ nazev: "Poloměr zakřivení", znacka: "r", hodnota: sheet[`H${row}`].v, jednotky: "-" });
+                  dimenze.push({ nazev: "Poloměr zakřivení", znacka: "r", hodnota: sheet[`H${row}`].v, jednotky: "mm" });
                   dimenze.push({ nazev: "Výška stěny mezi zaoblením", znacka: "d", hodnota: sheet[`I${row}`].v, jednotky: "mm" });
 
                   plocha.push({ nazev: "Průřezová plocha", znacka: "A", hodnota: sheet[`J${row}`].v, jednotky: "mm<sup>2</sup>" });
