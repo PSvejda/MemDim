@@ -15,24 +15,30 @@
 <div class="container">
   <h1>Výběr typu a velikosti průřezu</h1>
 
-  <div class="form-group">
-    <label for="typ">Typ průřezu:</label>
-    <select id="typ">
-      <option value="IPE">IPE</option>
-      <option value="HEA">HEA</option>
-      <option value="HEB">HEB</option>
-    </select>
-  </div>
+  <body onload="aktualizovatVelikosti()">
+    <div class="form-group">
+      <label for="typ">Typ průřezu:</label>
+      <select id="typ" onchange="aktualizovatVelikosti()">
+        <option value="IPE">IPE</option>
+        <option value="HEA">HEA</option>
+        <option value="HEB">HEB</option>
+        <option value="TR">TR</option>
+        <option value="OBD">OBD</option>
+      </select>
+    </div>
+  
+    <div class="form-group">
+      <label for="velikost">Velikost průřezu:</label>
+      <select id="velikost"></select>
+    </div>
+  </body>
 
-  <div class="form-group">
-    <label for="velikost">Velikost průřezu:</label>
-    <select id="velikost">
-      <option value="80">80</option>
-      <option value="90">90</option>
-      <option value="360">360</option>
-    </select>
-  </div>
-
+  <!-- Nový výběr pro velikost stěny (skrytý defaultně) -->
+    <div class="form-group" id="stena-group" style="display: none;">
+      <label for="stena">Velikost stěny:</label>
+      <select id="stena"></select>
+    </div>
+  
   <div class="button-container">
     <button onclick="generovatTabulky(); generovatObrazek()">Generovat Hodnoty</button>
   </div>

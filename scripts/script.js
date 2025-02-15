@@ -9,7 +9,18 @@ function generovatObrazek() {
     imageContainer.style.display = 'block';
   }
 
-  function generovatTabulky() {
+const velikostiPrurezu = {
+    "IPE": ["A", "B", "C"],
+    "HEA": ["1", "2", "3"],
+    "HEB": ["*", "/", "+"],
+    "TR": ["20", "21,3", "22"],
+    "OBD": ["20", "21,3", "22"]
+    
+};
+
+
+
+function generovatTabulky() {
     var typ = document.getElementById('typ').value;
     var velikost = document.getElementById('velikost').value;
     var filtr = document.getElementById('filtr').value;
@@ -183,9 +194,66 @@ function generovatObrazek() {
     document.getElementById('export_button-container').style.display = 'flex';
 }
 
-  
+var tloustkySten = {
+  "TR": {
+    "20": ["1,5 mm", "2 mm", "3 mm"],
+    "21,3": ["5 mm", "6 mm", "9 mm"],
+    "22": ["4 mm", "7 mm", "10 mm"]
+  },
+  "OBD": {
+    "20": ["F mm", "1,5 mm", "2 mm"],
+    "21,3": ["2 mm", "3 mm", "4 mm"],
+    "22": ["2,5 mm", "3,5 mm", "5 mm"]
+  }
+};
 
-  
+function aktualizovatVelikosti() {
+  var typ = document.getElementById("typ").value;
+  var velikostSelect = document.getElementById("velikost");
+  var stenaGroup = document.getElementById("stena-group");
+  var stenaSelect = document.getElementById("stena");
+
+  // Vyčištění existujících možností
+  velikostSelect.innerHTML = "";
+  stenaSelect.innerHTML = "";
+
+  // Přidání možností pro velikost průřezu
+  velikostiPrurezu[typ].forEach(function(velikost) {
+    var option = document.createElement("option");
+    option.value = velikost;
+    option.textContent = velikost;
+    velikostSelect.appendChild(option);
+  });
+
+  // Aktualizace dostupných tlouštěk stěn na základě velikosti a typu průřezu
+  function aktualizovatTloustkuSteny() {
+    stenaSelect.innerHTML = "";
+    var vybranaVelikost = velikostSelect.value;
+
+    if (tloustkySten[typ] && tloustkySten[typ][vybranaVelikost]) {
+      tloustkySten[typ][vybranaVelikost].forEach(function(tloustka) {
+        var option = document.createElement("option");
+        option.value = tloustka;
+        option.textContent = tloustka;
+        stenaSelect.appendChild(option);
+      });
+    }
+  }
+
+  // Zobrazíme výběr stěny pouze pokud existují odpovídající tloušťky stěn
+  if (tloustkySten[typ]) {
+    stenaGroup.style.display = "block";
+    velikostSelect.addEventListener("change", aktualizovatTloustkuSteny);
+    aktualizovatTloustkuSteny(); // Inicializace pro první hodnotu
+  } else {
+    stenaGroup.style.display = "none";
+  }
+}
+
+
+
+
+
 
 function exportovatHodnotyPodleFiltru() {
   var wb = XLSX.utils.book_new();
