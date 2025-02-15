@@ -173,7 +173,7 @@ table#prvek-table tr td {
     max-width: 28%; /* Mírná rezerva pro malé telefony */  
 }  
 .container {
-    width: 83%; /* Pro desktopová zobrazení */
+    width: 90%; /* Pro desktopová zobrazení */
 }
 }  
 
