@@ -1,4 +1,12 @@
+/* import { velikostiPrurezu } from '../const/const.js'; */
 
+const velikostiPrurezu = {
+  "IPE": ["80", "B", "C"],
+  "HEA": ["1", "2", "3"],
+  "HEB": ["*", "/", "+"],
+  "TR": ["20", "21,3", "22"],
+  "OBD": ["20", "21,3", "22"]
+};
 
 function generovatObrazek() {
     var typ = document.getElementById('typ').value;
@@ -9,16 +17,6 @@ function generovatObrazek() {
     sectionImage.src = imagePath;
     imageContainer.style.display = 'block';
   }
-
-const velikostiPrurezu = {
-    "IPE": ["80", "B", "C"],
-    "HEA": ["1", "2", "3"],
-    "HEB": ["*", "/", "+"],
-    "TR": ["20", "21,3", "22"],
-    "OBD": ["20", "21,3", "22"]
-    
-};
-
 
 
 function generovatTabulky() {
