@@ -10,12 +10,11 @@
   <link rel="stylesheet" href="./style/style.css">
     
 </head>
-<body>
+<body onload="aktualizovatVelikosti()">
 
 <div class="container">
   <h1>Výběr typu a velikosti průřezu</h1>
 
-  <body onload="aktualizovatVelikosti()">
     <div class="form-group">
       <label for="typ">Typ průřezu:</label>
       <select id="typ" onchange="aktualizovatVelikosti()">
@@ -31,7 +30,7 @@
       <label for="velikost">Velikost průřezu:</label>
       <select id="velikost"></select>
     </div>
-  </body>
+
 
   <!-- Nový výběr pro velikost stěny (skrytý defaultně) -->
     <div class="form-group" id="stena-group" style="display: none;">
@@ -90,10 +89,10 @@
     <table id="tlak-table"></table>
   </div>
 
-<div class="export_button-container" id="export_button-container" style="display: none;">
-  <button onclick="exportovatVsechnyHodnoty()">Exportovat Všechny Hodnoty</button>
-  <button onclick="exportovatHodnotyPodleFiltru()">Exportovat Zobrazené Hodnoty</button>
+  <div class="export_button-container" id="export_button-container" style="display: none;">
+    <button onclick="exportovatVsechnyHodnoty()">Exportovat Všechny Hodnoty</button>
+    <button onclick="exportovatHodnotyPodleFiltru()">Exportovat Zobrazené Hodnoty</button>
+  </div>
 </div>
-
 </body>
 </html>

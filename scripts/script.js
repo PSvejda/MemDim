@@ -1,4 +1,5 @@
 
+
 function generovatObrazek() {
     var typ = document.getElementById('typ').value;
     var imagePath = `Pictures/${typ}.png`;
@@ -10,7 +11,7 @@ function generovatObrazek() {
   }
 
 const velikostiPrurezu = {
-    "IPE": ["A", "B", "C"],
+    "IPE": ["80", "B", "C"],
     "HEA": ["1", "2", "3"],
     "HEB": ["*", "/", "+"],
     "TR": ["20", "21,3", "22"],
@@ -226,7 +227,7 @@ function aktualizovatVelikosti() {
   });
 
   // Aktualizace dostupných tlouštěk stěn na základě velikosti a typu průřezu
-  function aktualizovatTloustkuSteny() {
+function aktualizovatTloustkuSteny() {
     stenaSelect.innerHTML = "";
     var vybranaVelikost = velikostSelect.value;
 
