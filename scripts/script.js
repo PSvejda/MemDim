@@ -1,4 +1,4 @@
-/* import { velikostiPrurezu } from '../const/const.js'; */
+/* import { velikostiPrurezu } from '../constants/const.js'; */
 
 const velikostiPrurezu = {
   "IPE": ["80", "B", "C"],
@@ -18,6 +18,17 @@ function generovatObrazek() {
     imageContainer.style.display = 'block';
   }
 
+function skrytTabulky() {
+    document.getElementById('prvek-table').innerHTML = '';
+    document.getElementById('dimenze-table').innerHTML = '';
+    document.getElementById('plocha-table').innerHTML = '';
+    document.getElementById('vlastnosti-table').innerHTML = '';
+    document.getElementById('ohyb-table').innerHTML = '';
+    document.getElementById('tlak-table').innerHTML = '';
+    document.getElementById('filter-container').style.display = 'none';
+    document.getElementById('export_button-container').style.display = 'none';
+}
+
 
 function generovatTabulky() {
     var typ = document.getElementById('typ').value;
@@ -32,23 +43,30 @@ function generovatTabulky() {
       .then(data => {
           const workbook = XLSX.read(data, { type: 'array' });
 
-          // Zkontrolujeme, zda list existuje
           if (!workbook.Sheets[typ]) {
-              // Pokud neexistuje, skryt všechny tabulky
-              document.getElementById('prvek-table').innerHTML = '';
-              document.getElementById('dimenze-table').innerHTML = '';
-              document.getElementById('plocha-table').innerHTML = '';
-              document.getElementById('vlastnosti-table').innerHTML = '';
-              document.getElementById('ohyb-table').innerHTML = '';
-              document.getElementById('tlak-table').innerHTML = '';
-              document.getElementById('filter-container').style.display = 'none';
-              document.getElementById('export_button-container').style.display = 'none';
-              return; // Přerušení funkce, pokud list neexistuje
+            skrytTabulky();
+            return;
+        }
+            var sheet = workbook.Sheets[typ];
+            const range = sheet['!ref'];
+            const startRow = XLSX.utils.decode_range(range).s.r + 1;
+            const endRow = XLSX.utils.decode_range(range).e.r + 1;
+            let velikostExistuje = false;
+
+          for (let row = startRow; row <= endRow; row++) {
+            let velikostValue = sheet[`B${row}`] ? sheet[`B${row}`].v : undefined;
+            if (String(velikostValue) === velikost) {
+                velikostExistuje = true;
+                break;
+              }
           }
 
+          if (!velikostExistuje) {
+            skrytTabulky();
+            return;
+        }
+
           // Pokud list existuje, pokračuj v načítání dat
-          var sheet = workbook.Sheets[typ];
-          var velikostPrurezu = velikost;
           var prvek = [];
           var dimenze = [];
           var plocha = [];
@@ -56,14 +74,13 @@ function generovatTabulky() {
           var ohyb = [];
           var tlak = [];
 
-          // Získání rozsahu dat
-          const range = sheet['!ref']; // např. "A1:E10"
-          const startRow = XLSX.utils.decode_range(range).s.r + 1; // počáteční řádek
-          const endRow = XLSX.utils.decode_range(range).e.r + 1; // konečný řádek
+          
 
           for (let row = startRow; row <= endRow; row++) {
               let velikostValue = sheet[`B${row}`] ? sheet[`B${row}`].v : undefined;  // Zabezpečení pro undefined hodnoty
-              if (String(velikostValue) === velikostPrurezu) {
+              if (String(velikostValue) === velikost) {
+                
+                
                   prvek.push({ nazev: "Typ průřezu", hodnota: typ });
                   prvek.push({ nazev: "Velikost", hodnota: velikostValue });
                   prvek.push({ nazev: "Hmotnost", hodnota: sheet[`C${row}`].v + " kg/m" });
@@ -100,6 +117,7 @@ function generovatTabulky() {
                   tlak.push({ nazev: "S275",  hodnota: sheet[`AA${row}`].v });
                   tlak.push({ nazev: "S355",  hodnota: sheet[`AB${row}`].v });
                   tlak.push({ nazev: "S460",  hodnota: sheet[`AC${row}`].v });
+              
               }
           }
 
