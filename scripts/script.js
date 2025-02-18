@@ -40,6 +40,7 @@ function skrytTabulky() {
     document.getElementById('vlastnostiTR-table').innerHTML = '';
     document.getElementById('ohyb-table').innerHTML = '';
     document.getElementById('tlak-table').innerHTML = '';
+    document.getElementById('zatrideni-table').innerHTML = '';
     document.getElementById('filter-container').style.display = 'none';
     document.getElementById('export_button-container').style.display = 'none';
 }
