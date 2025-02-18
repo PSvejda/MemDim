@@ -453,39 +453,44 @@ function aktualizovatTloustkuSteny() {
 
 
 
-
-
 function exportovatHodnotyPodleFiltru() {
+  var typ = document.getElementById('typ').value;
   var wb = XLSX.utils.book_new();
-  
-  // Získáme tabulku PRVEK
-  var prvekTable = document.getElementById('prvek-table');
-  
-  // Vytvoříme list, který bude obsahovat všechny tabulky
   var sheet = [];
 
   // Přidáme PRVEK tabulku
-  sheet = sheet.concat(XLSX.utils.sheet_to_json(XLSX.utils.table_to_sheet(prvekTable), {header: 1}));
+  var prvekTable = document.getElementById('prvek-table');
+  sheet = sheet.concat(XLSX.utils.sheet_to_json(XLSX.utils.table_to_sheet(prvekTable), { header: 1 }));
 
-  // Seznam všech kontejnerů a jejich tabulek
-  var containers = [
-      {containerId: 'dimenze-container', tableId: 'dimenze-table'},
-      {containerId: 'plocha-container', tableId: 'plocha-table'},
-      {containerId: 'vlastnosti-container', tableId: 'vlastnosti-table'},
-      {containerId: 'ohyb-container', tableId: 'ohyb-table'},
-      {containerId: 'tlak-container', tableId: 'tlak-table'}
-  ];
+  // Definice tabulek podle typu průřezu
+  var containers;
+  if (typ === "TR") {
+    containers = [
+      { containerId: 'dimenzeTR-container', tableId: 'dimenzeTR-table' },
+      { containerId: 'plocha-container', tableId: 'plocha-table' },
+      { containerId: 'vlastnostiTR-container', tableId: 'vlastnostiTR-table' },
+      { containerId: 'zatrideni-container', tableId: 'zatrideni-table' }
+    ];
+  } else {
+    containers = [
+      { containerId: 'dimenze-container', tableId: 'dimenze-table' },
+      { containerId: 'plocha-container', tableId: 'plocha-table' },
+      { containerId: 'vlastnosti-container', tableId: 'vlastnosti-table' },
+      { containerId: 'ohyb-container', tableId: 'ohyb-table' },
+      { containerId: 'tlak-container', tableId: 'tlak-table' }
+    ];
+  }
 
   // Procházení všech kontejnerů
-  containers.forEach(function(container) {
-      var containerElement = document.getElementById(container.containerId);
-      var tableElement = document.getElementById(container.tableId);
-      
-      // Pokud je kontejner viditelný, přidáme odpovídající tabulku
-      if (containerElement.style.display === 'block' && tableElement) {
-          sheet.push([]);  // Přidáme prázdný řádek mezi tabulkami pro lepší přehlednost
-          sheet = sheet.concat(XLSX.utils.sheet_to_json(XLSX.utils.table_to_sheet(tableElement), {header: 1}));
-      }
+  containers.forEach(function (container) {
+    var containerElement = document.getElementById(container.containerId);
+    var tableElement = document.getElementById(container.tableId);
+
+    // Pokud je kontejner viditelný, přidáme odpovídající tabulku
+    if (containerElement && containerElement.style.display === 'block' && tableElement) {
+      sheet.push([]);  // Přidáme prázdný řádek mezi tabulkami pro lepší přehlednost
+      sheet = sheet.concat(XLSX.utils.sheet_to_json(XLSX.utils.table_to_sheet(tableElement), { header: 1 }));
+    }
   });
 
   // Přidáme obsah na jeden list
@@ -497,27 +502,49 @@ function exportovatHodnotyPodleFiltru() {
 }
 
 
-
 function exportovatVsechnyHodnoty() {
+  var typ = document.getElementById('typ').value;
   var wb = XLSX.utils.book_new();
   var ws_data = [];
-  var tables = ["prvek-table", "dimenze-table", "plocha-table", "vlastnosti-table", "ohyb-table", "tlak-table"];
 
-  tables.forEach((tableId, index) => {
-      var table = document.getElementById(tableId);
-      if (table && table.style.display !== "none") {
-          var rows = table.rows;
-          for (var i = 0; i < rows.length; i++) {
-              var row = [];
-              for (var j = 0; j < rows[i].cells.length; j++) {
-                  row.push(rows[i].cells[j].innerText);
-              }
-              ws_data.push(row);
-          }
-          if (index < tables.length - 1) {
-              ws_data.push([]); // Přidání prázdného řádku mezi tabulkami
-          }
+  // Přidáme PRVEK tabulku
+  var prvekTable = document.getElementById('prvek-table');
+  if (prvekTable) {
+    var rows = prvekTable.rows;
+    for (var i = 0; i < rows.length; i++) {
+      var row = [];
+      for (var j = 0; j < rows[i].cells.length; j++) {
+        row.push(rows[i].cells[j].innerText);
       }
+      ws_data.push(row);
+    }
+    ws_data.push([]); // Přidání prázdného řádku mezi tabulkami
+  }
+
+  // Definice tabulek podle typu průřezu
+  var tables;
+  if (typ === "TR") {
+    tables = ["dimenzeTR-table", "plocha-table", "vlastnostiTR-table", "zatrideni-table"];
+  } else {
+    tables = ["dimenze-table", "plocha-table", "vlastnosti-table", "ohyb-table", "tlak-table"];
+  }
+
+  // Procházení všech tabulek
+  tables.forEach((tableId, index) => {
+    var table = document.getElementById(tableId);
+    if (table && table.style.display !== "none") {
+      var rows = table.rows;
+      for (var i = 0; i < rows.length; i++) {
+        var row = [];
+        for (var j = 0; j < rows[i].cells.length; j++) {
+          row.push(rows[i].cells[j].innerText);
+        }
+        ws_data.push(row);
+      }
+      if (index < tables.length - 1) {
+        ws_data.push([]); // Přidání prázdného řádku mezi tabulkami
+      }
+    }
   });
 
   var ws = XLSX.utils.aoa_to_sheet(ws_data);
