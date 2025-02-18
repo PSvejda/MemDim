@@ -166,7 +166,6 @@ function generovatTabulky() {
           <option value="vlastnosti">VLASTNOSTI</option>
           <option value="ohyb">OHYB</option>
           <option value="tlak">TLAK</option>
-          <option value="zatřídění">ZATŘÍDĚNÍ</option>
       `;
   }
 
