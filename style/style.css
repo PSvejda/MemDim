@@ -19,6 +19,11 @@ text-align: center;
 color: #333;
 }
 
+h2 {
+text-align: center;
+color: #888585;
+}
+
 .form-group {
 margin-bottom: 20px;
 }
