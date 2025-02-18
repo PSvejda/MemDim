@@ -3,9 +3,22 @@
 const velikostiPrurezu = {
   "IPE": ["80", "B", "C"],
   "HEA": ["1", "2", "3"],
-  "HEB": ["*", "/", "+"],
-  "TR": ["20", "21,3", "22"],
+  "HEB": ["80", "/", "+"],
+  "TR": ["80", "21,3", "22"],
   "OBD": ["20", "21,3", "22"]
+};
+
+var tloustkySten = {
+  "TR": {
+    "80": ["2.6", "2 mm", "3 mm"],
+    "21,3": ["5 mm", "6 mm", "9 mm"],
+    "22": ["4 mm", "7 mm", "10 mm"]
+  },
+  "OBD": {
+    "20": ["F mm", "1,5 mm", "2 mm"],
+    "21,3": ["2 mm", "3 mm", "4 mm"],
+    "22": ["2,5 mm", "3,5 mm", "5 mm"]
+  }
 };
 
 function generovatObrazek() {
@@ -21,19 +34,140 @@ function generovatObrazek() {
 function skrytTabulky() {
     document.getElementById('prvek-table').innerHTML = '';
     document.getElementById('dimenze-table').innerHTML = '';
+    document.getElementById('dimenzeTR-table').innerHTML = '';
     document.getElementById('plocha-table').innerHTML = '';
     document.getElementById('vlastnosti-table').innerHTML = '';
+    document.getElementById('vlastnostiTR-table').innerHTML = '';
     document.getElementById('ohyb-table').innerHTML = '';
     document.getElementById('tlak-table').innerHTML = '';
     document.getElementById('filter-container').style.display = 'none';
     document.getElementById('export_button-container').style.display = 'none';
 }
 
+function generovatData(sheet, row, typ, velikostValue) {
+  var prvek = [];
+  var dimenze = [];
+  var plocha = [];
+  var vlastnosti = [];
+  var ohyb = [];
+  var tlak = [];
+  
+  prvek.push({ nazev: "Typ průřezu", hodnota: typ });
+  prvek.push({ nazev: "Velikost", hodnota: velikostValue });
+  prvek.push({ nazev: "Hmotnost", hodnota: sheet[`C${row}`].v + " kg/m" });
+
+
+  // Další načítání hodnot pro dimenze, plochu, vlastnosti atd. podle struktury excelového souboru
+  dimenze.push({ nazev: "Výška průřezu", znacka: "h", hodnota: sheet[`D${row}`].v, jednotky: "mm" });
+  dimenze.push({ nazev: "Šířka průřezu", znacka: "b", hodnota: sheet[`E${row}`].v, jednotky: "mm" });
+  dimenze.push({ nazev: "Tloušťka stojiny", znacka: "t<sub>w</sub>", hodnota: sheet[`F${row}`].v, jednotky: "mm" });
+  dimenze.push({ nazev: "Tloušťka pásnice", znacka: "t<sub>f</sub>", hodnota: sheet[`G${row}`].v, jednotky: "mm" });
+  dimenze.push({ nazev: "Poloměr zakřivení", znacka: "r", hodnota: sheet[`H${row}`].v, jednotky: "mm" });
+  dimenze.push({ nazev: "Výška stěny mezi zaoblením", znacka: "d", hodnota: sheet[`I${row}`].v, jednotky: "mm" });
+
+  plocha.push({ nazev: "Průřezová plocha", znacka: "A", hodnota: sheet[`J${row}`].v, jednotky: "mm<sup>2</sup>" });
+  plocha.push({ nazev: "Smyková plocha", znacka: "A<sub>vz</sub>", hodnota: sheet[`K${row}`].v, jednotky: "mm<sup>2</sup>" });
+
+  vlastnosti.push({ nazev: "Moment setrvačnosti kolem osy y", znacka: "I<sub>y</sub>", hodnota: sheet[`L${row}`].v, jednotky: "mm<sup>4</sup>" });
+  vlastnosti.push({ nazev: "Pružný průřezový modul kolem osy y", znacka: "W<sub>y</sub>", hodnota: sheet[`M${row}`].v, jednotky: "mm<sup>3</sup>" });
+  vlastnosti.push({ nazev: "Plastický průřezový modul kolem osy y", znacka: "W<sub>pl,y</sub>", hodnota: sheet[`N${row}`].v, jednotky: "mm<sup>3</sup>" });
+  vlastnosti.push({ nazev: "Poloměr setrvačnosti kolem osy y", znacka: "i<sub>y</sub>", hodnota: sheet[`O${row}`].v, jednotky: "mm" });
+  vlastnosti.push({ nazev: "Moment setrvačnosti kolem osy z", znacka: "I<sub>z</sub>", hodnota: sheet[`P${row}`].v, jednotky: "mm<sup>4</sup>" });
+  vlastnosti.push({ nazev: "Pružný průřezový modul kolem osy z", znacka: "W<sub>z</sub>", hodnota: sheet[`Q${row}`].v, jednotky: "mm<sup>3</sup>" });
+  vlastnosti.push({ nazev: "Plastický průřezový modul kolem osy z", znacka: "W<sub>pl,z</sub>", hodnota: sheet[`R${row}`].v, jednotky: "mm<sup>3</sup>" });
+  vlastnosti.push({ nazev: "Poloměr setrvačnosti kolem osy z", znacka: "i<sub>z</sub>", hodnota: sheet[`S${row}`].v, jednotky: "mm" });
+  vlastnosti.push({ nazev: "Moment setrvačnosti ve volném kroucení", znacka: "I<sub>t</sub>", hodnota: sheet[`T${row}`].v, jednotky: "mm<sup>4</sup>" });
+  vlastnosti.push({ nazev: "Výsečový moment setrvačnosti", znacka: "I<sub>w</sub>", hodnota: sheet[`U${row}`].v, jednotky: "mm<sup>6</sup>" });
+
+  ohyb.push({ nazev: "S235",  hodnota: sheet[`V${row}`].v });
+  ohyb.push({ nazev: "S275",  hodnota: sheet[`W${row}`].v });
+  ohyb.push({ nazev: "S355",  hodnota: sheet[`X${row}`].v });
+  ohyb.push({ nazev: "S460",  hodnota: sheet[`Y${row}`].v });
+
+  tlak.push({ nazev: "S235",  hodnota: sheet[`Z${row}`].v });
+  tlak.push({ nazev: "S275",  hodnota: sheet[`AA${row}`].v });
+  tlak.push({ nazev: "S355",  hodnota: sheet[`AB${row}`].v });
+  tlak.push({ nazev: "S460",  hodnota: sheet[`AC${row}`].v });
+
+  return {
+    prvek,
+    dimenze,
+    plocha,
+    vlastnosti,
+    ohyb,
+    tlak
+  };
+}
+
+function generovatDataproTR(sheet, row, typ, velikostValue, tloustkaValue) {
+  var prvek = [];
+  var dimenzeTR = [];
+  var plocha = [];
+  var vlastnostiTR = [];
+  var zatřídění = [];
+  
+  prvek.push({ nazev: "Typ průřezu", hodnota: typ });
+  prvek.push({ nazev: "Velikost", hodnota: velikostValue + " x " + tloustkaValue});
+  prvek.push({ nazev: "Hmotnost", hodnota: sheet[`D${row}`].v + " kg/m" });
+
+  // Další načítání hodnot pro dimenze, plochu, vlastnosti atd. podle struktury excelového souboru
+  dimenzeTR.push({ nazev: "Průměr", znacka: "d", hodnota: sheet[`E${row}`].v, jednotky: "mm" });
+  dimenzeTR.push({ nazev: "Tloušťka stěny", znacka: "t", hodnota: sheet[`F${row}`].v, jednotky: "mm" });
+
+  plocha.push({ nazev: "Průřezová plocha", znacka: "A", hodnota: sheet[`G${row}`].v, jednotky: "mm<sup>2</sup>" });
+  plocha.push({ nazev: "Smyková plocha", znacka: "A<sub>vz</sub>", hodnota: sheet[`H${row}`].v, jednotky: "mm<sup>2</sup>" });
+
+  vlastnostiTR.push({ nazev: "Moment setrvačnosti", znacka: "I", hodnota: sheet[`I${row}`].v, jednotky: "mm<sup>4</sup>" });
+  vlastnostiTR.push({ nazev: "Pružný průřezový modul", znacka: "W", hodnota: sheet[`J${row}`].v, jednotky: "mm<sup>3</sup>" });
+  vlastnostiTR.push({ nazev: "Plastický průřezový modul", znacka: "W<sub>pl</sub>", hodnota: sheet[`K${row}`].v, jednotky: "mm<sup>3</sup>" });
+  vlastnostiTR.push({ nazev: "Poloměr setrvačnosti", znacka: "i", hodnota: sheet[`L${row}`].v, jednotky: "mm" });
+  vlastnostiTR.push({ nazev: "Dvojnásobek plochy uzavřené střednicí průřezu", znacka: "Ω", hodnota: sheet[`M${row}`].v, jednotky: "mm<sup>2</sup>" });
+  vlastnostiTR.push({ nazev: "Moment setrvačnosti v kroucenÌ uzavřenÈho průřezu", znacka: "I<sub>d</sub>", hodnota: sheet[`N${row}`].v, jednotky: "mm<sup>4</sup>" });
+
+  zatřídění.push({ nazev: "S235",  hodnota: sheet[`O${row}`].v });
+  zatřídění.push({ nazev: "S275",  hodnota: sheet[`P${row}`].v });
+  zatřídění.push({ nazev: "S355",  hodnota: sheet[`Q${row}`].v });
+  zatřídění.push({ nazev: "S460",  hodnota: sheet[`R${row}`].v });
+
+  return {
+    prvek,
+    dimenzeTR,
+    plocha,
+    vlastnostiTR,
+    zatřídění
+  };
+}
+
+
 
 function generovatTabulky() {
     var typ = document.getElementById('typ').value;
     var velikost = document.getElementById('velikost').value;
-    var filtr = document.getElementById('filtr').value;
+    var filtrSelect = document.getElementById('filtr');
+
+    // Vyčištění existujících možností
+    filtrSelect.innerHTML = '';
+
+    // Přidání možností pro filtr
+    if (typ === "TR") {
+        filtrSelect.innerHTML = `
+            <option value="all">Vše</option>
+            <option value="ohyb">DIMENZE</option>
+            <option value="tlak">PLOCHA</option>
+        `;
+    } else {
+        filtrSelect.innerHTML = `
+            <option value="all">Vše</option>
+            <option value="dimenze">DIMENZE</option>
+            <option value="plocha">PLOCHA</option>
+            <option value="vlastnosti">VLASTNOSTI</option>
+            <option value="ohyb">OHYB</option>
+            <option value="tlak">TLAK</option>
+        `;
+    }
+
+    // Získání aktuální hodnoty filtru
+    var filtr = filtrSelect.value;
 
     // Pevně definovaný soubor
     var soubor = './stl2.xlsx';  // Cesta k souboru
@@ -66,144 +200,27 @@ function generovatTabulky() {
             return;
         }
 
-          // Pokud list existuje, pokračuj v načítání dat
-          var prvek = [];
-          var dimenze = [];
-          var plocha = [];
-          var vlastnosti = [];
-          var ohyb = [];
-          var tlak = [];
-
-          
-
           for (let row = startRow; row <= endRow; row++) {
-              let velikostValue = sheet[`B${row}`] ? sheet[`B${row}`].v : undefined;  // Zabezpečení pro undefined hodnoty
+              let velikostValue = sheet[`B${row}`] ? sheet[`B${row}`].v : undefined;  
+
               if (String(velikostValue) === velikost) {
-                
-                
-                  prvek.push({ nazev: "Typ průřezu", hodnota: typ });
-                  prvek.push({ nazev: "Velikost", hodnota: velikostValue });
-                  prvek.push({ nazev: "Hmotnost", hodnota: sheet[`C${row}`].v + " kg/m" });
+                if (typ === "TR") {
+                  let tloustkaValue = sheet[`C${row}`] ? sheet[`C${row}`].v : undefined;
+                  let tloustka = document.getElementById('stena').value;
+                  if (String(tloustkaValue) === tloustka) {
+                    var { prvek, dimenzeTR, plocha, vlastnostiTR, zatřídění } = generovatDataproTR(sheet, row, typ, velikostValue, tloustkaValue);
+                  } 
+                } else {
+                  var { prvek, dimenze, plocha, vlastnosti, ohyb, tlak } = generovatData(sheet, row, typ, velikostValue);
+                }
+            }
+        }
+        if (typ === "TR") {
+          zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatřídění, filtr);
+        } else {
 
-
-                  // Další načítání hodnot pro dimenze, plochu, vlastnosti atd. podle struktury excelového souboru
-                  dimenze.push({ nazev: "Výška průřezu", znacka: "h", hodnota: sheet[`D${row}`].v, jednotky: "mm" });
-                  dimenze.push({ nazev: "Šířka průřezu", znacka: "b", hodnota: sheet[`E${row}`].v, jednotky: "mm" });
-                  dimenze.push({ nazev: "Tloušťka stojiny", znacka: "t<sub>w</sub>", hodnota: sheet[`F${row}`].v, jednotky: "mm" });
-                  dimenze.push({ nazev: "Tloušťka pásnice", znacka: "t<sub>f</sub>", hodnota: sheet[`G${row}`].v, jednotky: "mm" });
-                  dimenze.push({ nazev: "Poloměr zakřivení", znacka: "r", hodnota: sheet[`H${row}`].v, jednotky: "mm" });
-                  dimenze.push({ nazev: "Výška stěny mezi zaoblením", znacka: "d", hodnota: sheet[`I${row}`].v, jednotky: "mm" });
-
-                  plocha.push({ nazev: "Průřezová plocha", znacka: "A", hodnota: sheet[`J${row}`].v, jednotky: "mm<sup>2</sup>" });
-                  plocha.push({ nazev: "Smyková plocha", znacka: "A<sub>vz</sub>", hodnota: sheet[`K${row}`].v, jednotky: "mm<sup>2</sup>" });
-
-                  vlastnosti.push({ nazev: "Moment setrvačnosti kolem osy y", znacka: "I<sub>y</sub>", hodnota: sheet[`L${row}`].v, jednotky: "mm<sup>4</sup>" });
-                  vlastnosti.push({ nazev: "Pružný průřezový modul kolem osy y", znacka: "W<sub>y</sub>", hodnota: sheet[`M${row}`].v, jednotky: "mm<sup>3</sup>" });
-                  vlastnosti.push({ nazev: "Plastický průřezový modul kolem osy y", znacka: "W<sub>pl,y</sub>", hodnota: sheet[`N${row}`].v, jednotky: "mm<sup>3</sup>" });
-                  vlastnosti.push({ nazev: "Poloměr setrvačnosti kolem osy y", znacka: "i<sub>y</sub>", hodnota: sheet[`O${row}`].v, jednotky: "mm" });
-                  vlastnosti.push({ nazev: "Moment setrvačnosti kolem osy z", znacka: "I<sub>z</sub>", hodnota: sheet[`P${row}`].v, jednotky: "mm<sup>4</sup>" });
-                  vlastnosti.push({ nazev: "Pružný průřezový modul kolem osy z", znacka: "W<sub>z</sub>", hodnota: sheet[`Q${row}`].v, jednotky: "mm<sup>3</sup>" });
-                  vlastnosti.push({ nazev: "Plastický průřezový modul kolem osy z", znacka: "W<sub>pl,z</sub>", hodnota: sheet[`R${row}`].v, jednotky: "mm<sup>3</sup>" });
-                  vlastnosti.push({ nazev: "Poloměr setrvačnosti kolem osy z", znacka: "i<sub>z</sub>", hodnota: sheet[`S${row}`].v, jednotky: "mm" });
-                  vlastnosti.push({ nazev: "Moment setrvačnosti ve volném kroucení", znacka: "I<sub>t</sub>", hodnota: sheet[`T${row}`].v, jednotky: "mm<sup>4</sup>" });
-                  vlastnosti.push({ nazev: "Výsečový moment setrvačnosti", znacka: "I<sub>w</sub>", hodnota: sheet[`U${row}`].v, jednotky: "mm<sup>6</sup>" });
-
-                  ohyb.push({ nazev: "S235",  hodnota: sheet[`V${row}`].v });
-                  ohyb.push({ nazev: "S275",  hodnota: sheet[`W${row}`].v });
-                  ohyb.push({ nazev: "S355",  hodnota: sheet[`X${row}`].v });
-                  ohyb.push({ nazev: "S460",  hodnota: sheet[`Y${row}`].v });
-
-                  tlak.push({ nazev: "S235",  hodnota: sheet[`Z${row}`].v });
-                  tlak.push({ nazev: "S275",  hodnota: sheet[`AA${row}`].v });
-                  tlak.push({ nazev: "S355",  hodnota: sheet[`AB${row}`].v });
-                  tlak.push({ nazev: "S460",  hodnota: sheet[`AC${row}`].v });
-              
-              }
-          }
-
-          // Zobrazení tabulky PRVEK
-          var prvekTable = `<tr><th colspan=2>PRVEK</th></tr>`;
-          prvek.forEach(function(item) {
-              prvekTable += `<tr><td>${item.nazev}</td><td>${item.hodnota}</td></tr>`;
-          });
-          document.getElementById('prvek-table').innerHTML = prvekTable;
-
-          // Načítání tabulek podle filtrů
-          if (filtr === 'all' || filtr === 'dimenze') {
-            document.getElementById('dimenze-container').style.display = 'block';
-            var dimenzeTable = `
-              <tr><th colspan=4>DIMENZE</th></tr>
-              <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
-            `;
-            dimenze.forEach(function(item) {
-              dimenzeTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
-            });
-            document.getElementById('dimenze-table').innerHTML = dimenzeTable;
-          } else {
-              document.getElementById('dimenze-container').style.display = 'none';
-          }
-
-          if (filtr === 'all' || filtr === 'plocha') {
-            document.getElementById('plocha-container').style.display = 'block';
-            var plochaTable = `
-              <tr><th colspan=4>PLOCHA</th></tr>
-              <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
-            `;
-            plocha.forEach(function(item) {
-              plochaTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
-            });
-            document.getElementById('plocha-table').innerHTML = plochaTable;
-          } else {
-            document.getElementById('plocha-container').style.display = 'none';
-          }
-
-          if (filtr === 'all' || filtr === 'vlastnosti') {
-            document.getElementById('vlastnosti-container').style.display = 'block';
-            var vlastnostiTable = `
-              <tr><th colspan=4>VLASTNOSTI</th></tr>
-              <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
-            `;
-            vlastnosti.forEach(function(item) {
-              vlastnostiTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
-            });
-            document.getElementById('vlastnosti-table').innerHTML = vlastnostiTable;
-          } else {
-            document.getElementById('vlastnosti-container').style.display = 'none';
-          }
-
-          if (filtr === 'all' || filtr === 'ohyb') {
-              document.getElementById('ohyb-container').style.display = 'block';
-              var ohybTable = `
-                  <tr><th colspan="4">OHYB</th></tr>
-                  <tr><th>S235</th><th>S275</th><th>S355</th><th>S460</th></tr>
-                  <tr>
-                    <td>${ohyb.find(item => item.nazev === "S235")?.hodnota || "-"}</td>
-                    <td>${ohyb.find(item => item.nazev === "S275")?.hodnota || "-"}</td>
-                    <td>${ohyb.find(item => item.nazev === "S355")?.hodnota || "-"}</td>
-                    <td>${ohyb.find(item => item.nazev === "S460")?.hodnota || "-"}</td>
-                  </tr>
-              `;
-              document.getElementById('ohyb-table').innerHTML = ohybTable;
-          } else {
-              document.getElementById('ohyb-container').style.display = 'none';
-          }
-
-          if (filtr === 'all' || filtr === 'tlak') {
-              document.getElementById('tlak-container').style.display = 'block';
-              var tlakTable = `
-                  <tr><th colspan="4">TLAK</th></tr>
-                  <tr><th>S235</th><th>S275</th><th>S355</th><th>S460</th></tr>
-                  <tr>
-                    <td>${tlak.find(item => item.nazev === "S235")?.hodnota || "-"}</td>
-                    <td>${tlak.find(item => item.nazev === "S275")?.hodnota || "-"}</td>
-                    <td>${tlak.find(item => item.nazev === "S355")?.hodnota || "-"}</td>
-                    <td>${tlak.find(item => item.nazev === "S460")?.hodnota || "-"}</td>
-                  </tr>
-              `;
-              document.getElementById('tlak-table').innerHTML = tlakTable;
-          } else {
-              document.getElementById('tlak-container').style.display = 'none';
-          }
+          zobrazTabulky(prvek, dimenze, plocha, vlastnosti, ohyb, tlak, filtr);
+        }
       });
   
     // Zobrazit filtr a tlačítka pro export
@@ -211,18 +228,170 @@ function generovatTabulky() {
     document.getElementById('export_button-container').style.display = 'flex';
 }
 
-var tloustkySten = {
-  "TR": {
-    "20": ["1,5 mm", "2 mm", "3 mm"],
-    "21,3": ["5 mm", "6 mm", "9 mm"],
-    "22": ["4 mm", "7 mm", "10 mm"]
-  },
-  "OBD": {
-    "20": ["F mm", "1,5 mm", "2 mm"],
-    "21,3": ["2 mm", "3 mm", "4 mm"],
-    "22": ["2,5 mm", "3,5 mm", "5 mm"]
+function zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatřídění, filtr) {
+  
+  // Zobrazení tabulky PRVEK
+  var prvekTable = `<tr><th colspan=2>PRVEK</th></tr>`;
+  prvek.forEach(function(item) {
+      prvekTable += `<tr><td>${item.nazev}</td><td>${item.hodnota}</td></tr>`;
+  });
+  document.getElementById('prvek-table').innerHTML = prvekTable;
+
+  // Načítání tabulek podle filtrů
+  document.getElementById('vlastnosti-container').style.display = 'none';
+  document.getElementById('dimenze-container').style.display = 'none';
+
+  if (filtr === 'all' || filtr === 'dimenze') {
+      document.getElementById('dimenzeTR-container').style.display = 'block';
+      var dimenzeTable = `
+          <tr><th colspan=4>DIMENZE</th></tr>
+          <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
+      `;
+      dimenzeTR.forEach(function(item) {
+          dimenzeTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+      });
+      document.getElementById('dimenzeTR-table').innerHTML = dimenzeTable;
+  } else {
+      document.getElementById('dimenzeTR-container').style.display = 'none';
   }
-};
+
+  if (filtr === 'all' || filtr === 'plocha') {
+      document.getElementById('plocha-container').style.display = 'block';
+      var plochaTable = `
+          <tr><th colspan=4>PLOCHA</th></tr>
+          <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
+      `;
+      plocha.forEach(function(item) {
+          plochaTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+      });
+      document.getElementById('plocha-table').innerHTML = plochaTable;
+  } else {
+      document.getElementById('plocha-container').style.display = 'none';
+  }
+
+  if (filtr === 'all' || filtr === 'vlastnosti') {
+      document.getElementById('vlastnostiTR-container').style.display = 'block';
+      var vlastnostiTable = `
+          <tr><th colspan=4>VLASTNOSTI</th></tr>
+          <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
+      `;
+      vlastnostiTR.forEach(function(item) {
+          vlastnostiTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+      });
+      document.getElementById('vlastnostiTR-table').innerHTML = vlastnostiTable;
+  } else {
+      document.getElementById('vlastnostiTR-container').style.display = 'none';
+  }
+
+  if (filtr === 'all' || filtr === 'ohyb') {
+      document.getElementById('ohyb-container').style.display = 'block';
+      var ohybTable = `
+          <tr><th colspan="4">OHYB</th></tr>
+          <tr><th>S235</th><th>S275</th><th>S355</th><th>S460</th></tr>
+          <tr>
+              <td>${zatřídění.find(item => item.nazev === "S235")?.hodnota || "-"}</td>
+              <td>${zatřídění.find(item => item.nazev === "S275")?.hodnota || "-"}</td>
+              <td>${zatřídění.find(item => item.nazev === "S355")?.hodnota || "-"}</td>
+              <td>${zatřídění.find(item => item.nazev === "S460")?.hodnota || "-"}</td>
+          </tr>
+      `;
+      document.getElementById('ohyb-table').innerHTML = ohybTable;
+  } else {
+      document.getElementById('ohyb-container').style.display = 'none';
+  }
+
+}
+
+function zobrazTabulky(prvek, dimenze, plocha, vlastnosti, ohyb, tlak, filtr) {
+  // Zobrazení tabulky PRVEK
+  var prvekTable = `<tr><th colspan=2>PRVEK</th></tr>`;
+  prvek.forEach(function(item) {
+      prvekTable += `<tr><td>${item.nazev}</td><td>${item.hodnota}</td></tr>`;
+  });
+  document.getElementById('prvek-table').innerHTML = prvekTable;
+
+  // Načítání tabulek podle filtrů
+  document.getElementById('vlastnostiTR-container').style.display = 'none';
+  document.getElementById('dimenzeTR-container').style.display = 'none';
+
+  if (filtr === 'all' || filtr === 'dimenze') {
+      document.getElementById('dimenze-container').style.display = 'block';
+      var dimenzeTable = `
+          <tr><th colspan=4>DIMENZE</th></tr>
+          <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
+      `;
+      dimenze.forEach(function(item) {
+          dimenzeTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+      });
+      document.getElementById('dimenze-table').innerHTML = dimenzeTable;
+  } else {
+      document.getElementById('dimenze-container').style.display = 'none';
+  }
+
+  if (filtr === 'all' || filtr === 'plocha') {
+      document.getElementById('plocha-container').style.display = 'block';
+      var plochaTable = `
+          <tr><th colspan=4>PLOCHA</th></tr>
+          <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
+      `;
+      plocha.forEach(function(item) {
+          plochaTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+      });
+      document.getElementById('plocha-table').innerHTML = plochaTable;
+  } else {
+      document.getElementById('plocha-container').style.display = 'none';
+  }
+
+  if (filtr === 'all' || filtr === 'vlastnosti') {
+      document.getElementById('vlastnosti-container').style.display = 'block';
+      var vlastnostiTable = `
+          <tr><th colspan=4>VLASTNOSTI</th></tr>
+          <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
+      `;
+      vlastnosti.forEach(function(item) {
+          vlastnostiTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+      });
+      document.getElementById('vlastnosti-table').innerHTML = vlastnostiTable;
+  } else {
+      document.getElementById('vlastnosti-container').style.display = 'none';
+  }
+
+  if (filtr === 'all' || filtr === 'ohyb') {
+      document.getElementById('ohyb-container').style.display = 'block';
+      var ohybTable = `
+          <tr><th colspan="4">OHYB</th></tr>
+          <tr><th>S235</th><th>S275</th><th>S355</th><th>S460</th></tr>
+          <tr>
+              <td>${ohyb.find(item => item.nazev === "S235")?.hodnota || "-"}</td>
+              <td>${ohyb.find(item => item.nazev === "S275")?.hodnota || "-"}</td>
+              <td>${ohyb.find(item => item.nazev === "S355")?.hodnota || "-"}</td>
+              <td>${ohyb.find(item => item.nazev === "S460")?.hodnota || "-"}</td>
+          </tr>
+      `;
+      document.getElementById('ohyb-table').innerHTML = ohybTable;
+  } else {
+      document.getElementById('ohyb-container').style.display = 'none';
+  }
+
+  if (filtr === 'all' || filtr === 'tlak') {
+      document.getElementById('tlak-container').style.display = 'block';
+      var tlakTable = `
+          <tr><th colspan="4">TLAK</th></tr>
+          <tr><th>S235</th><th>S275</th><th>S355</th><th>S460</th></tr>
+          <tr>
+              <td>${tlak.find(item => item.nazev === "S235")?.hodnota || "-"}</td>
+              <td>${tlak.find(item => item.nazev === "S275")?.hodnota || "-"}</td>
+              <td>${tlak.find(item => item.nazev === "S355")?.hodnota || "-"}</td>
+              <td>${tlak.find(item => item.nazev === "S460")?.hodnota || "-"}</td>
+          </tr>
+      `;
+      document.getElementById('tlak-table').innerHTML = tlakTable;
+  } else {
+      document.getElementById('tlak-container').style.display = 'none';
+  }
+}
+
+
 
 function aktualizovatVelikosti() {
   var typ = document.getElementById("typ").value;

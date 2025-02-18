@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Výběr průřezu a generování hodnot</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+  <script src="scripts/script.js?v=1.0"></script>
   <link rel="stylesheet" href="style/style.css?v=1.0">
 
     
@@ -56,6 +57,7 @@
       <option value="vlastnosti">VLASTNOSTI</option>
       <option value="ohyb">OHYB</option>
       <option value="tlak">TLAK</option>
+      <option value="zatřídění">ZATŘÍDĚNÍ</option>
     </select>
   </div>
 
@@ -69,6 +71,11 @@
     <table id="dimenze-table"></table>
   </div>
 
+   <!-- Tabulka DIMENZE pro TR-->
+   <div class="table-container" id="dimenzeTR-container" style="display: none;">
+    <table id="dimenzeTR-table"></table>
+  </div>
+
   <!-- Tabulka PLOCHA -->
   <div class="table-container" id="plocha-container" style="display: none;">
     <table id="plocha-table"></table>
@@ -77,6 +84,11 @@
   <!-- Tabulka VLASTNOSTI -->
   <div class="table-container" id="vlastnosti-container" style="display: none;">
     <table id="vlastnosti-table"></table>
+  </div>
+
+   <!-- Tabulka VLASTNOSTI pro TR-->
+   <div class="table-container" id="vlastnostiTR-container" style="display: none;">
+    <table id="vlastnostiTR-table"></table>
   </div>
 
   <!-- Tabulka OHYB -->
@@ -95,7 +107,7 @@
   </div>
 </div>
 
-<script src="scripts/script.js"></script>
+
 
 </body>
 </html>
