@@ -122,7 +122,7 @@ function generovatDataproTR(sheet, row, typ, velikostValue, tloustkaValue) {
   vlastnostiTR.push({ nazev: "Plastický průřezový modul", znacka: "W<sub>pl</sub>", hodnota: sheet[`K${row}`].v, jednotky: "mm<sup>3</sup>" });
   vlastnostiTR.push({ nazev: "Poloměr setrvačnosti", znacka: "i", hodnota: sheet[`L${row}`].v, jednotky: "mm" });
   vlastnostiTR.push({ nazev: "Dvojnásobek plochy uzavřené střednicí průřezu", znacka: "Ω", hodnota: sheet[`M${row}`].v, jednotky: "mm<sup>2</sup>" });
-  vlastnostiTR.push({ nazev: "Moment setrvačnosti v kroucenÌ uzavřenÈho průřezu", znacka: "I<sub>d</sub>", hodnota: sheet[`N${row}`].v, jednotky: "mm<sup>4</sup>" });
+  vlastnostiTR.push({ nazev: "Moment setrvačnosti v kroucení uzavřeného průřezu", znacka: "I<sub>d</sub>", hodnota: sheet[`N${row}`].v, jednotky: "mm<sup>4</sup>" });
 
   zatřídění.push({ nazev: "S235",  hodnota: sheet[`O${row}`].v });
   zatřídění.push({ nazev: "S275",  hodnota: sheet[`P${row}`].v });
@@ -141,91 +141,102 @@ function generovatDataproTR(sheet, row, typ, velikostValue, tloustkaValue) {
 
 
 function generovatTabulky() {
-    var typ = document.getElementById('typ').value;
-    var velikost = document.getElementById('velikost').value;
-    var filtrSelect = document.getElementById('filtr');
+  var typ = document.getElementById('typ').value;
+  var velikost = document.getElementById('velikost').value;
+  var filtrSelect = document.getElementById('filtr');
 
-    // Vyčištění existujících možností
-    filtrSelect.innerHTML = '';
+  // Uložení aktuálně vybrané hodnoty filtru
+  var selectedFilter = filtrSelect.value;
 
-    // Přidání možností pro filtr
-    if (typ === "TR") {
-        filtrSelect.innerHTML = `
-            <option value="all">Vše</option>
-            <option value="ohyb">DIMENZE</option>
-            <option value="tlak">PLOCHA</option>
-        `;
-    } else {
-        filtrSelect.innerHTML = `
-            <option value="all">Vše</option>
-            <option value="dimenze">DIMENZE</option>
-            <option value="plocha">PLOCHA</option>
-            <option value="vlastnosti">VLASTNOSTI</option>
-            <option value="ohyb">OHYB</option>
-            <option value="tlak">TLAK</option>
-        `;
-    }
+  // Vyčištění existujících možností
+  filtrSelect.innerHTML = '';
 
-    // Získání aktuální hodnoty filtru
-    var filtr = filtrSelect.value;
+  // Přidání možností pro filtr
+  if (typ === "TR") {
+      filtrSelect.innerHTML = `
+          <option value="all">Vše</option>
+          <option value="ohyb">OHYB</option>
+          <option value="tlak">TLAK</option>
+      `;
+  } else {
+      filtrSelect.innerHTML = `
+          <option value="all">Vše</option>
+          <option value="dimenze">DIMENZE</option>
+          <option value="plocha">PLOCHA</option>
+          <option value="vlastnosti">VLASTNOSTI</option>
+          <option value="ohyb">OHYB</option>
+          <option value="tlak">TLAK</option>
+          <option value="zatřídění">ZATŘÍDĚNÍ</option>
+      `;
+  }
 
-    // Pevně definovaný soubor
-    var soubor = './stl2.xlsx';  // Cesta k souboru
+  // Obnovení vybrané hodnoty filtru, pokud je stále platná
+  if (filtrSelect.querySelector(`option[value="${selectedFilter}"]`)) {
+      filtrSelect.value = selectedFilter;
+  } else {
+      // Pokud vybraná hodnota není platná, nastavíme výchozí hodnotu
+      filtrSelect.value = "all";
+  }
 
-    fetch(soubor, { cache: 'no-store' })
-      .then(response => response.arrayBuffer())
-      .then(data => {
-          const workbook = XLSX.read(data, { type: 'array' });
+  // Získání aktuální hodnoty filtru
+  var filtr = filtrSelect.value;
 
-          if (!workbook.Sheets[typ]) {
-            skrytTabulky();
-            return;
-        }
-            var sheet = workbook.Sheets[typ];
-            const range = sheet['!ref'];
-            const startRow = XLSX.utils.decode_range(range).s.r + 1;
-            const endRow = XLSX.utils.decode_range(range).e.r + 1;
-            let velikostExistuje = false;
+  // Pevně definovaný soubor
+  var soubor = './stl2.xlsx';  // Cesta k souboru
 
-          for (let row = startRow; row <= endRow; row++) {
-            let velikostValue = sheet[`B${row}`] ? sheet[`B${row}`].v : undefined;
-            if (String(velikostValue) === velikost) {
-                velikostExistuje = true;
-                break;
-              }
-          }
+  fetch(soubor, { cache: 'no-store' })
+    .then(response => response.arrayBuffer())
+    .then(data => {
+        const workbook = XLSX.read(data, { type: 'array' });
 
-          if (!velikostExistuje) {
-            skrytTabulky();
-            return;
-        }
+        if (!workbook.Sheets[typ]) {
+          skrytTabulky();
+          return;
+      }
+          var sheet = workbook.Sheets[typ];
+          const range = sheet['!ref'];
+          const startRow = XLSX.utils.decode_range(range).s.r + 1;
+          const endRow = XLSX.utils.decode_range(range).e.r + 1;
+          let velikostExistuje = false;
 
-          for (let row = startRow; row <= endRow; row++) {
-              let velikostValue = sheet[`B${row}`] ? sheet[`B${row}`].v : undefined;  
-
-              if (String(velikostValue) === velikost) {
-                if (typ === "TR") {
-                  let tloustkaValue = sheet[`C${row}`] ? sheet[`C${row}`].v : undefined;
-                  let tloustka = document.getElementById('stena').value;
-                  if (String(tloustkaValue) === tloustka) {
-                    var { prvek, dimenzeTR, plocha, vlastnostiTR, zatřídění } = generovatDataproTR(sheet, row, typ, velikostValue, tloustkaValue);
-                  } 
-                } else {
-                  var { prvek, dimenze, plocha, vlastnosti, ohyb, tlak } = generovatData(sheet, row, typ, velikostValue);
-                }
+        for (let row = startRow; row <= endRow; row++) {
+          let velikostValue = sheet[`B${row}`] ? sheet[`B${row}`].v : undefined;
+          if (String(velikostValue) === velikost) {
+              velikostExistuje = true;
+              break;
             }
         }
-        if (typ === "TR") {
-          zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatřídění, filtr);
-        } else {
 
-          zobrazTabulky(prvek, dimenze, plocha, vlastnosti, ohyb, tlak, filtr);
-        }
-      });
-  
-    // Zobrazit filtr a tlačítka pro export
-    document.getElementById('filter-container').style.display = 'block';
-    document.getElementById('export_button-container').style.display = 'flex';
+        if (!velikostExistuje) {
+          skrytTabulky();
+          return;
+      }
+
+        for (let row = startRow; row <= endRow; row++) {
+            let velikostValue = sheet[`B${row}`] ? sheet[`B${row}`].v : undefined;  
+
+            if (String(velikostValue) === velikost) {
+              if (typ === "TR") {
+                let tloustkaValue = sheet[`C${row}`] ? sheet[`C${row}`].v : undefined;
+                let tloustka = document.getElementById('stena').value;
+                if (String(tloustkaValue) === tloustka) {
+                  var { prvek, dimenzeTR, plocha, vlastnostiTR, zatřídění } = generovatDataproTR(sheet, row, typ, velikostValue, tloustkaValue);
+                } 
+              } else {
+                var { prvek, dimenze, plocha, vlastnosti, ohyb, tlak } = generovatData(sheet, row, typ, velikostValue);
+              }
+          }
+      }
+      if (typ === "TR") {
+        zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatřídění, filtr);
+      } else {
+        zobrazTabulky(prvek, dimenze, plocha, vlastnosti, ohyb, tlak, filtr);
+      }
+    });
+
+  // Zobrazit filtr a tlačítka pro export
+  document.getElementById('filter-container').style.display = 'block';
+  document.getElementById('export_button-container').style.display = 'flex';
 }
 
 function zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatřídění, filtr) {
@@ -240,6 +251,8 @@ function zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatříděn�
   // Načítání tabulek podle filtrů
   document.getElementById('vlastnosti-container').style.display = 'none';
   document.getElementById('dimenze-container').style.display = 'none';
+  document.getElementById('ohyb-container').style.display = 'none';
+  document.getElementById('tlak-container').style.display = 'none';
 
   if (filtr === 'all' || filtr === 'dimenze') {
       document.getElementById('dimenzeTR-container').style.display = 'block';
@@ -284,9 +297,9 @@ function zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatříděn�
   }
 
   if (filtr === 'all' || filtr === 'ohyb') {
-      document.getElementById('ohyb-container').style.display = 'block';
-      var ohybTable = `
-          <tr><th colspan="4">OHYB</th></tr>
+      document.getElementById('zatrideni-container').style.display = 'block';
+      var zatrideniTable = `
+          <tr><th colspan="4">ZATŘÍDĚNÍ</th></tr>
           <tr><th>S235</th><th>S275</th><th>S355</th><th>S460</th></tr>
           <tr>
               <td>${zatřídění.find(item => item.nazev === "S235")?.hodnota || "-"}</td>
@@ -295,9 +308,9 @@ function zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatříděn�
               <td>${zatřídění.find(item => item.nazev === "S460")?.hodnota || "-"}</td>
           </tr>
       `;
-      document.getElementById('ohyb-table').innerHTML = ohybTable;
+      document.getElementById('zatrideni-table').innerHTML = zatrideniTable;
   } else {
-      document.getElementById('ohyb-container').style.display = 'none';
+      document.getElementById('zatrideni-container').style.display = 'none';
   }
 
 }
@@ -313,6 +326,7 @@ function zobrazTabulky(prvek, dimenze, plocha, vlastnosti, ohyb, tlak, filtr) {
   // Načítání tabulek podle filtrů
   document.getElementById('vlastnostiTR-container').style.display = 'none';
   document.getElementById('dimenzeTR-container').style.display = 'none';
+  document.getElementById('zatrideni-container').style.display = 'none';
 
   if (filtr === 'all' || filtr === 'dimenze') {
       document.getElementById('dimenze-container').style.display = 'block';
