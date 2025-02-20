@@ -106,7 +106,9 @@ margin-bottom: 45px;
     max-width: 250px;
     margin: 0 auto; 
     margin-top: 35px; 
+    margin-bottom: 40px;
 }
+
 }
 
 button {
@@ -186,6 +188,7 @@ width: 20%; /* 1 part */
     max-width: 28%; /* Plná šířka na velmi malých displejích */  
 }  
 
+
 }  
 
 
@@ -196,18 +199,21 @@ width: 20%; /* 1 part */
 .container {
     width: 90%; /* Pro desktopová zobrazení */
 }
+
 }  
 
 @media (min-width: 481px) and (max-width: 768px) and (max-height: 230px) {  
 .image-container img {  
     max-width: 30%; /* Tablet a landscape mobilní telefony */  
 }  
+
 }  
 
 @media (min-width: 481px) and (max-width: 768px) and (min-height: 231px) {  
 .image-container img {  
     max-width: 30%; /* Tablet a landscape mobilní telefony */  
 }  
+
 }  
 
 @media (min-width: 769px)  {  
