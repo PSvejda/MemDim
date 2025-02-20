@@ -78,14 +78,17 @@ td:first-child {
 text-align: left;
 }
 
-
-
-
-
 .button-container {
 text-align: center;
 margin-top: 20px;
 }
+
+button:active {
+    transform: scale(0.95);
+    background-color: #3e8e41; /* Tmavší zelená pro efekt stisku */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
 
 .export_button-container {
 display: flex;
