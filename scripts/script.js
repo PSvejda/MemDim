@@ -41,6 +41,7 @@ function skrytTabulky() {
     document.getElementById('ohyb-table').innerHTML = '';
     document.getElementById('tlak-table').innerHTML = '';
     document.getElementById('zatrideni-table').innerHTML = '';
+    
     document.getElementById('filter-container').style.display = 'none';
     document.getElementById('export_button-container').style.display = 'none';
 }
@@ -175,56 +176,57 @@ function generovatTabulky() {
   var soubor = './stl2.xlsx';
 
   fetch(soubor, { cache: 'no-store' })
-    .then(response => response.arrayBuffer())
-    .then(data => {
-        const workbook = XLSX.read(data, { type: 'array' });
+      .then(response => response.arrayBuffer())
+      .then(data => {
+          const workbook = XLSX.read(data, { type: 'array' });
 
-        if (!workbook.Sheets[typ]) {
-            skrytTabulky();
-            return;
-        }
-        
-        var sheet = workbook.Sheets[typ];
-        const range = sheet['!ref'];
-        const startRow = XLSX.utils.decode_range(range).s.r + 1;
-        const endRow = XLSX.utils.decode_range(range).e.r + 1;
-        let dataNalezena = false;
-        let tloustka = document.getElementById('stena').value;
-        let prvek, dimenzeTR, plocha, vlastnostiTR, zatřídění, dimenze, vlastnosti, ohyb, tlak;
+          if (!workbook.Sheets[typ]) {
+              skrytTabulky();
+              return;
+          }
 
-        for (let row = startRow; row <= endRow; row++) {
-            let velikostValue = sheet[`B${row}`] ? sheet[`B${row}`].v : undefined;
-            let tloustkaValue = sheet[`C${row}`] ? sheet[`C${row}`].v : undefined;
-            
-            if (String(velikostValue) === velikost) {
-                if (typ === "TR" && (tloustkaValue === undefined || String(tloustkaValue) !== tloustka)) {
-                    continue;
-                }
-                
-                if (typ === "TR") {
-                    ({ prvek, dimenzeTR, plocha, vlastnostiTR, zatřídění } = generovatDataproTR(sheet, row, typ, velikostValue, tloustkaValue));
-                } else {
-                    ({ prvek, dimenze, plocha, vlastnosti, ohyb, tlak } = generovatData(sheet, row, typ, velikostValue));
-                }
-                dataNalezena = true;
-                break;
-            }
-        }
+          var sheet = workbook.Sheets[typ];
+          const range = sheet['!ref'];
+          const startRow = XLSX.utils.decode_range(range).s.r + 1;
+          const endRow = XLSX.utils.decode_range(range).e.r + 1;
+          let dataNalezena = false;
+          let tloustka = document.getElementById('stena').value;
+          let prvek, dimenzeTR, plocha, vlastnostiTR, zatřídění, dimenze, vlastnosti, ohyb, tlak;
 
-        if (!dataNalezena) {
-            skrytTabulky();
-            return;
-        }
+          for (let row = startRow; row <= endRow; row++) {
+              let velikostValue = sheet[`B${row}`] ? sheet[`B${row}`].v : undefined;
+              let tloustkaValue = sheet[`C${row}`] ? sheet[`C${row}`].v : undefined;
 
-        if (typ === "TR") {
-            zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatřídění, filtr);
-        } else {
-            zobrazTabulky(prvek, dimenze, plocha, vlastnosti, ohyb, tlak, filtr);
-        }
-    });
+              if (String(velikostValue) === velikost) {
+                  if (typ === "TR" && (tloustkaValue === undefined || String(tloustkaValue) !== tloustka)) {
+                      continue;
+                  }
 
-  document.getElementById('filter-container').style.display = 'block';
-  document.getElementById('export_button-container').style.display = 'flex';
+                  if (typ === "TR") {
+                      ({ prvek, dimenzeTR, plocha, vlastnostiTR, zatřídění } = generovatDataproTR(sheet, row, typ, velikostValue, tloustkaValue));
+                  } else {
+                      ({ prvek, dimenze, plocha, vlastnosti, ohyb, tlak } = generovatData(sheet, row, typ, velikostValue));
+                  }
+                  dataNalezena = true;
+                  break;
+              }
+          }
+
+          if (!dataNalezena) {
+              skrytTabulky();
+              return;
+          }
+
+          if (typ === "TR") {
+              zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatřídění, filtr);
+          } else {
+              zobrazTabulky(prvek, dimenze, plocha, vlastnosti, ohyb, tlak, filtr);
+          }
+
+          // Zobrazíme filtrační kontejner a tlačítka pro export pouze pokud jsou data nalezena
+          document.getElementById('filter-container').style.display = 'block';
+          document.getElementById('export_button-container').style.display = 'flex';
+      });
 }
 
 
