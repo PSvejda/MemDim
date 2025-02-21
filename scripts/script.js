@@ -38,11 +38,14 @@ function toggleDropdown() {
 
 // Skryje rozbalovací odkazy při kliknutí mimo něj
 window.onclick = function(event) {
-  if (!event.target.matches('.dropbtn') && !event.target.matches('.dropdown-links a')) {
-    const dropdownLinks = document.getElementById('dropdown-links');
-    dropdownLinks.style.display = 'none';
+  const dropdown = document.querySelector('.dropdown');
+  
+  // Kontrola, zda bylo kliknuto uvnitř dropdownu
+  if (!dropdown.contains(event.target)) {
+    document.getElementById('dropdown-links').style.display = 'none';
   }
-}
+};
+
 
 function generovatObrazek() {
     var typ = document.getElementById('typ').value;
