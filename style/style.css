@@ -148,7 +148,7 @@ justify-content: center;
 }
 
 table tr:hover {
-background-color: #f0e8e8; /* Šedivé pozadí při najetí */
+background-color: #F4F4F4; /* Šedivé pozadí při najetí */
 }
 table#prvek-table tr td {
     width: 50%; /* Nastaví šířku každé buňky na 50% */
