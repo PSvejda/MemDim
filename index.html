@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -6,16 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Výběr průřezu a generování hodnot</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
-  <script src="scripts/script.js?v=1.1"></script>
+  <script src="scripts/script.js?v=1.2"></script>
   <link rel="stylesheet" href="style/style.css?v=1.4">
-
-    
 </head>
 <body onload="aktualizovatVelikosti()">
 
-<div class="container">
-  <h1>MemDim</h1>
-  <h2>Online statické tabulky průřezů</h2>
+  <div class="container">
+    <!-- Tlačítko a rozbalovací odkazy -->
+    <div class="dropdown">
+      <div class="dropdown-links" id="dropdown-links">
+        <a href="#" onclick="showPage('MemDim')">MemDim</a>
+        <a href="#" onclick="showPage('Beton')">Beton</a>
+      </div>
+      <button class="dropbtn" onclick="toggleDropdown()">
+        <img src="icons/menu.svg" alt="Menu" class="menu-icon">
+      </button>
+    </div>
+
+  <!-- Obsah pro MemDim -->
+  <div id="MemDim-content" class="content">
+    <h1>MemDim</h1>
+    <h2>Online statické tabulky průřezů</h2>
 
     <div class="form-group">
       <label for="typ">Typ průřezu:</label>
@@ -33,93 +43,97 @@
       <select id="velikost"></select>
     </div>
 
-
-  <!-- Nový výběr pro velikost stěny (skrytý defaultně) -->
+    <!-- Nový výběr pro velikost stěny (skrytý defaultně) -->
     <div class="form-group" id="stena-group" style="display: none;">
       <label for="stena">Velikost stěny [mm]:</label>
       <select id="stena"></select>
     </div>
   
-  <div class="button-container">
-    <button onclick="generovatTabulky(); generovatObrazek()">Generovat Hodnoty</button>
+    <div class="button-container">
+      <button onclick="generovatTabulky(); generovatObrazek()">Generovat Hodnoty</button>
+    </div>
+
+    <div class="image-container" id="image-container">
+      <img id="section-image" src="" alt="Typ průřezu">
+    </div>
+
+    <!-- Filtr pro zobrazení sloupců -->
+    <div class="filter-container" id="filter-container" style="display: none;">
+      <label for="filtr">Filtr:</label>
+      <select id="filtr" onchange="generovatTabulky()">
+        <option value="all">Vše</option>
+        <option value="dimenze">DIMENZE</option>
+        <option value="plocha">PLOCHA</option>
+        <option value="vlastnosti">VLASTNOSTI</option>
+        <option value="ohyb">OHYB</option>
+        <option value="tlak">TLAK</option>
+        <option value="zatřídění">ZATŘÍDĚNÍ</option>
+      </select>
+    </div>
+
+    <!-- Tabulka PRVEK -->
+    <div class="table-container" id="prvek-container">
+      <table id="prvek-table"></table>
+    </div>
+
+    <!-- Tabulka DIMENZE -->
+    <div class="table-container" id="dimenze-container" style="display: none;">
+      <table id="dimenze-table"></table>
+    </div>
+
+    <!-- Tabulka DIMENZE pro TR-->
+    <div class="table-container" id="dimenzeTR-container" style="display: none;">
+      <table id="dimenzeTR-table"></table>
+    </div>
+
+    <!-- Tabulka PLOCHA -->
+    <div class="table-container" id="plocha-container" style="display: none;">
+      <table id="plocha-table"></table>
+    </div>
+
+    <!-- Tabulka VLASTNOSTI -->
+    <div class="table-container" id="vlastnosti-container" style="display: none;">
+      <table id="vlastnosti-table"></table>
+    </div>
+
+    <!-- Tabulka VLASTNOSTI pro TR-->
+    <div class="table-container" id="vlastnostiTR-container" style="display: none;">
+      <table id="vlastnostiTR-table"></table>
+    </div>
+
+    <!-- Tabulka OHYB -->
+    <div class="table-container" id="ohyb-container" style="display: none;">
+      <table id="ohyb-table"></table>
+    </div>
+
+    <!-- Tabulka OHYB -->
+    <div class="table-container" id="zatrideni-container" style="display: none;">
+      <table id="zatrideni-table"></table>
+    </div>
+
+    <!-- Tabulka TLAK -->
+    <div class="table-container" id="tlak-container" style="display: none;">
+      <table id="tlak-table"></table>
+    </div>
+
+    <div class="export_button-container" id="export_button-container" style="display: none;">
+      <button onclick="exportovatVsechnyHodnoty()">Exportovat Všechny Hodnoty</button>
+      <button onclick="exportovatHodnotyPodleFiltru()">Exportovat Zobrazené Hodnoty</button>
+    </div>
+
+    <div class="footer" id="footer">
+      <p>© 2025 MemDim</p>
+      <p>V případě zjištění nesprávných hodnot, hlaště chybu na adresu <I>svejdpa@cvut.cz</I></p>
+    </div>
+
   </div>
 
-  <div class="image-container" id="image-container">
-    <img id="section-image" src="" alt="Typ průřezu">
+  <!-- Obsah pro Beton -->
+  <div id="Beton-content" class="content" style="display: none;">
+    <h1>Beton</h1>
+    <p>Tuto stránku teprve připravujeme...</p>
   </div>
-
-  <!-- Filtr pro zobrazení sloupců -->
-  <div class="filter-container" id="filter-container" style="display: none;">
-    <label for="filtr">Filtr:</label>
-    <select id="filtr" onchange="generovatTabulky()">
-      <option value="all">Vše</option>
-      <option value="dimenze">DIMENZE</option>
-      <option value="plocha">PLOCHA</option>
-      <option value="vlastnosti">VLASTNOSTI</option>
-      <option value="ohyb">OHYB</option>
-      <option value="tlak">TLAK</option>
-      <option value="zatřídění">ZATŘÍDĚNÍ</option>
-    </select>
-  </div>
-
-  <!-- Tabulka PRVEK -->
-  <div class="table-container" id="prvek-container">
-    <table id="prvek-table"></table>
-  </div>
-
-  <!-- Tabulka DIMENZE -->
-  <div class="table-container" id="dimenze-container" style="display: none;">
-    <table id="dimenze-table"></table>
-  </div>
-
-   <!-- Tabulka DIMENZE pro TR-->
-   <div class="table-container" id="dimenzeTR-container" style="display: none;">
-    <table id="dimenzeTR-table"></table>
-  </div>
-
-  <!-- Tabulka PLOCHA -->
-  <div class="table-container" id="plocha-container" style="display: none;">
-    <table id="plocha-table"></table>
-  </div>
-
-  <!-- Tabulka VLASTNOSTI -->
-  <div class="table-container" id="vlastnosti-container" style="display: none;">
-    <table id="vlastnosti-table"></table>
-  </div>
-
-   <!-- Tabulka VLASTNOSTI pro TR-->
-   <div class="table-container" id="vlastnostiTR-container" style="display: none;">
-    <table id="vlastnostiTR-table"></table>
-  </div>
-
-  <!-- Tabulka OHYB -->
-  <div class="table-container" id="ohyb-container" style="display: none;">
-    <table id="ohyb-table"></table>
-  </div>
-
-  <!-- Tabulka OHYB -->
-  <div class="table-container" id="zatrideni-container" style="display: none;">
-    <table id="zatrideni-table"></table>
-  </div>
-
-  <!-- Tabulka TLAK -->
-  <div class="table-container" id="tlak-container" style="display: none;">
-    <table id="tlak-table"></table>
-  </div>
-
-  <div class="export_button-container" id="export_button-container" style="display: none;">
-    <button onclick="exportovatVsechnyHodnoty()">Exportovat Všechny Hodnoty</button>
-    <button onclick="exportovatHodnotyPodleFiltru()">Exportovat Zobrazené Hodnoty</button>
-  </div>
-
-  <div class="footer" id="footer">
-    <p>© 2025 MemDim</p>
-    <p>V případě zjištění nesprávných hodnot, hlaště chybu na adresu <I>svejdpa@cvut.cz</I></p>
-  </div>
-  
 </div>
-
-
 
 </body>
 </html>

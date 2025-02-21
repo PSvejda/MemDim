@@ -21,6 +21,29 @@ var tloustkySten = {
   }
 };
 
+function showPage(page) {
+  // Skryje všechny obsahy
+  document.querySelectorAll('.content').forEach(function(content) {
+    content.style.display = 'none';
+  });
+
+  // Zobrazí vybraný obsah
+  document.getElementById(page + '-content').style.display = 'block';
+}
+
+function toggleDropdown() {
+  const dropdownLinks = document.getElementById('dropdown-links');
+  dropdownLinks.style.display = dropdownLinks.style.display === 'flex' ? 'none' : 'flex';
+}
+
+// Skryje rozbalovací odkazy při kliknutí mimo něj
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn') && !event.target.matches('.dropdown-links a')) {
+    const dropdownLinks = document.getElementById('dropdown-links');
+    dropdownLinks.style.display = 'none';
+  }
+}
+
 function generovatObrazek() {
     var typ = document.getElementById('typ').value;
     var imagePath = `Pictures/${typ}.png`;
