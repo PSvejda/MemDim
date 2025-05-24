@@ -1,4 +1,3 @@
-/* import { velikostiPrurezu } from '../constants/const.js'; */
 
 const velikostiPrurezu = {
   "IPE": ["80", "B", "C"],
@@ -568,3 +567,5 @@ function exportovatVsechnyHodnoty() {
   XLSX.utils.book_append_sheet(wb, ws, "Data");
   XLSX.writeFile(wb, "Vystup.xlsx");
 }
+
+// BETON PAGE //
