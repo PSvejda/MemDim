@@ -69,9 +69,9 @@ function generovatBetonoveTabulky() {
     .then(properties => {
       // Generování dat pro tabulky
       const prvek = [
-        { nazev: "Pevnostní třída", znacka: "-", hodnota: tridaBetonu, jednotky: "-" },
-        { nazev: "Poissonův součinitel", znacka: "μ", hodnota: properties.v, jednotky: "-" },
-        { nazev: "Dílčí součinitel spolehlivosti", znacka: "γ<sub>c</sub>", hodnota: properties.γc, jednotky: "-" }
+        { nazev: "Pevnostní třída", znacka: "-", hodnota: tridaBetonu },
+        { nazev: "Poissonův součinitel", znacka: "μ", hodnota: properties.v },
+        { nazev: "Dílčí součinitel spolehlivosti", znacka: "γ<sub>c</sub>", hodnota: properties.γc }
       ];
 
       const pevnostTlak = [
@@ -96,7 +96,8 @@ function generovatBetonoveTabulky() {
           znacka: "ε<sub>cu3</sub>", 
           hodnota: properties.εcu3, 
           jednotky: "‰",
-          info: "Mezní přetvoření εcu3 je maximální dovolené poměrné stlačení betonu v tlaku. Tato hodnota je důležitá pro mezní stav únosnosti a používá se při návrhu železobetonových konstrukcí. Představuje bod, kdy dochází k porušení betonu v tlaku."
+          info: "Mezní přetvoření εcu3 je maximální dovolené poměrné stlačení betonu v tlaku. Tato hodnota je důležitá pro mezní stav únosnosti a používá se při návrhu železobetonových konstrukcí. Představuje bod, kdy dochází k porušení betonu v tlaku.",
+          showImage: true
         }
       ];
 
@@ -148,16 +149,22 @@ function zobrazitBetonoveTabulky(prvek, pevnostTlak, pevnostTah, modulPruznosti,
 
 function vytvorTabulku(data, title) {
   const table = document.createElement('table');
+  
+  // Zjistit, zda data obsahují jednotky
+  const maJednotky = data[0].hasOwnProperty('jednotky');
+  const pocetSloupcu = maJednotky ? 4 : 3;
+  
+  // Přidat hlavičku tabulky
   table.innerHTML = `
     <thead>
       <tr>
-        <th colspan="4" class="table-header">${title}</th>
+        <th colspan="${pocetSloupcu}" class="table-header">${title}</th>
       </tr>
       <tr>
         <th>Veličina</th>
         <th>Značka</th>
         <th>Hodnota</th>
-        <th>Jednotky</th>
+        ${maJednotky ? '<th>Jednotky</th>' : ''}
       </tr>
     </thead>
     <tbody>
@@ -165,10 +172,10 @@ function vytvorTabulku(data, title) {
         const escapedInfo = row.info ? row.info.replace(/"/g, '&quot;') : '';
         return `
           <tr>
-            <td>${row.nazev}${row.info ? `<span class="info-icon" onclick='zobrazitInfo("${escapedInfo}")'>ⓘ</span>` : ''}</td>
+            <td>${row.nazev}${row.info ? `<span class="info-icon" onclick='zobrazitInfo("${escapedInfo}", ${row.showImage || false})'>ⓘ</span>` : ''}</td>
             <td>${row.znacka}</td>
             <td>${row.hodnota}</td>
-            <td>${row.jednotky}</td>
+            ${maJednotky ? `<td>${row.jednotky}</td>` : ''}
           </tr>
         `;
       }).join('')}
@@ -181,7 +188,8 @@ function vytvorTabulku(data, title) {
     icon.addEventListener('click', function(e) {
       e.preventDefault();
       const text = this.getAttribute('onclick').match(/"(.*?)"/)[1];
-      zobrazitInfo(text);
+      const showImage = this.getAttribute('onclick').includes('true');
+      zobrazitInfo(text, showImage);
     });
   });
 
@@ -238,43 +246,73 @@ function exportBetonFiltr() {
 }
 
 function exportBetonKomplet() {
-  const wb = XLSX.utils.book_new();
-  let ws_data = [];
-  const tridaBetonu = document.getElementById('beton-trida').value;
+  try {
+    const wb = XLSX.utils.book_new();
+    let ws_data = [];
+    const tridaBetonu = document.getElementById('beton-trida').value;
 
-  // Definice všech tabulek
-  const containers = [
-    { containerId: 'beton-prvek-container', title: 'PRVEK' },
-    { containerId: 'beton-pevnost-tlak-container', title: 'PEVNOST V TLAKU' },
-    { containerId: 'beton-pevnost-tah-container', title: 'PEVNOST V TAHU' },
-    { containerId: 'beton-modul-pruznosti-container', title: 'MODUL PRUŽNOSTI' },
-    { containerId: 'beton-mezni-pretvoreni-container', title: 'MEZNÍ PŘETVOŘENÍ' }
-  ];
+    // Definice všech tabulek a jejich dat
+    const containers = [
+      { id: 'beton-prvek-container', title: 'PRVEK' },
+      { id: 'beton-pevnost-tlak-container', title: 'PEVNOST V TLAKU' },
+      { id: 'beton-pevnost-tah-container', title: 'PEVNOST V TAHU' },
+      { id: 'beton-modul-pruznosti-container', title: 'MODUL PRUŽNOSTI' },
+      { id: 'beton-mezni-pretvoreni-container', title: 'MEZNÍ PŘETVOŘENÍ' }
+    ];
 
-  // Procházení všech kontejnerů
-  containers.forEach((container, index) => {
-    const containerElement = document.getElementById(container.containerId);
-    if (containerElement) {
-      const tableElement = containerElement.querySelector('table');
-      if (tableElement) {
-        const rows = tableElement.rows;
-        for (let i = 0; i < rows.length; i++) {
-          const row = [];
-          for (let j = 0; j < rows[i].cells.length; j++) {
-            row.push(rows[i].cells[j].innerText);
+    // Procházení všech kontejnerů
+    containers.forEach((container, index) => {
+      const containerElement = document.getElementById(container.id);
+      if (containerElement) {
+        // Najít první tabulku v kontejneru
+        const table = containerElement.querySelector('table');
+        if (table) {
+          // Přidat prázdný řádek mezi tabulkami (kromě první)
+          if (index > 0) {
+            ws_data.push([]);
           }
-          ws_data.push(row);
-        }
-        if (index < containers.length - 1) {
-          ws_data.push([]); // Přidání prázdného řádku mezi tabulkami
+
+          // Přidat data z tabulky
+          const rows = table.rows;
+          for (let i = 0; i < rows.length; i++) {
+            const rowData = [];
+            const cells = rows[i].cells;
+            
+            for (let j = 0; j < cells.length; j++) {
+              // Získat čistý text bez HTML tagů
+              let cellText = cells[j].textContent.trim();
+              
+              // Pokud je to číslo, převést na číslo a zaokrouhlit
+              if (!isNaN(cellText) && cellText !== '') {
+                cellText = Number(parseFloat(cellText).toFixed(3));
+              }
+              
+              rowData.push(cellText);
+            }
+            ws_data.push(rowData);
+          }
         }
       }
-    }
-  });
+    });
 
-  const ws = XLSX.utils.aoa_to_sheet(ws_data);
-  XLSX.utils.book_append_sheet(wb, ws, "Beton " + tridaBetonu);
-  XLSX.writeFile(wb, `Beton_${tridaBetonu.replace(/ /g, '_')}_vse.xlsx`);
+    // Kontrola, zda máme nějaká data k exportu
+    if (ws_data.length === 0) {
+      throw new Error('Žádná data k exportu');
+    }
+
+    // Vytvořit list a přidat data
+    const ws = XLSX.utils.aoa_to_sheet(ws_data);
+    
+    // Přidat list do sešitu s upraveným názvem (nahradit lomítko pomlčkou)
+    const bezpecnyNazevListu = "Beton " + tridaBetonu.replace(/\//g, "-");
+    XLSX.utils.book_append_sheet(wb, ws, bezpecnyNazevListu);
+    
+    // Exportovat soubor
+    XLSX.writeFile(wb, "Vystup.xlsx");
+  } catch (error) {
+    console.error('Chyba při exportu:', error);
+    alert('Nepodařilo se exportovat data: ' + error.message);
+  }
 }
 
 // Event listener pro změnu třídy betonu
@@ -294,6 +332,7 @@ const modalHTML = `
     <div class="modal-content">
       <span class="modal-close" onclick="zavritInfo()">&times;</span>
       <p id="modalText"></p>
+      <div id="modalImage" style="text-align: center; margin-top: 20px;"></div>
     </div>
   </div>
 `;
@@ -304,15 +343,28 @@ if (!document.getElementById('infoModal')) {
 }
 
 // Funkce pro zobrazení informačního okna
-function zobrazitInfo(text) {
+function zobrazitInfo(text, showImage = false) {
   console.log('Zobrazuji info:', text); // Pro debugování
   const modal = document.getElementById('infoModal');
   const modalText = document.getElementById('modalText');
-  if (!modal || !modalText) {
+  const modalImage = document.getElementById('modalImage');
+  
+  if (!modal || !modalText || !modalImage) {
     console.error('Modal elements not found!');
     return;
   }
+  
   modalText.textContent = text;
+  
+  // Zobrazit nebo skrýt obrázek podle parametru
+  if (showImage) {
+    modalImage.innerHTML = '<img src="Pictures/Pracovni_Diagram_Realny.png" alt="Pracovní diagram" style="max-width: 100%; height: auto;">';
+    modalImage.style.display = 'block';
+  } else {
+    modalImage.innerHTML = '';
+    modalImage.style.display = 'none';
+  }
+  
   modal.style.display = 'flex';
 }
 
