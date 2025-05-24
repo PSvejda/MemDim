@@ -143,7 +143,23 @@ text-align: left;
 
 .button-container {
 text-align: center;
-margin-top: 20px;
+margin-top: 15px;
+}
+
+.znaceni-button {
+background-color: #3498db; /* Modrá barva pro odlišení od zeleného tlačítka */
+
+margin-bottom: 15px;
+}
+
+.znaceni-button:hover {
+background-color: #2980b9; /* Tmavší modrá při najetí myší */
+}
+
+.znaceni-button:active {
+transform: scale(0.95);
+background-color: #2471a3; /* Ještě tmavší modrá při stisku */
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 button:active {
