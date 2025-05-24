@@ -29,13 +29,21 @@ function nacistDataZExcelu(tridaBetonu) {
         // Mapování řádků na vlastnosti
         const rowMapping = {
           fck: 5,      // řádek 5 pro fck
+          fcd: 6,      // řádek 6 pro fcd
+          fckcube: 7,  // řádek 7 pro fck,cube
           fcm: 8,      // řádek 8 pro fcm
           fctm: 9,     // řádek 9 pro fctm
           fctk005: 10, // řádek 10 pro fctk,0,05
+          fctd: 11,    // řádek 11 pro fctd
           fctk095: 12, // řádek 12 pro fctk,0,95
           Ecm: 13,     // řádek 13 pro Ecm
           εc3: 19,     // řádek 19 pro Ec3
-          εcu3: 20     // řádek 20 pro Ecu3
+          εcu3: 20,    // řádek 20 pro Ecu3
+          εc1: 15,     // řádek 15 pro Ec1
+          εcu1: 16,    // řádek 16 pro Ecu1
+          εc2: 17,     // řádek 17 pro Ec2
+          εcu2: 18,    // řádek 18 pro Ecu2
+          n: 14        // řádek 14 pro n
         };
 
         properties = {};
@@ -47,7 +55,9 @@ function nacistDataZExcelu(tridaBetonu) {
         // Přidání konstantních hodnot
         properties.v = 0.2;     // Poissonův součinitel je vždy 0,2
         properties.γc = 1.5;    // Součinitel spolehlivosti je vždy 1,5
-
+        properties.γs = 1.15;
+        properties.α = 0.000016;
+        
         if (properties) {
           resolve(properties);
         } else {
@@ -56,6 +66,22 @@ function nacistDataZExcelu(tridaBetonu) {
       })
       .catch(error => reject(error));
   });
+}
+
+// Funkce pro zaokrouhlení čísla na určitý počet desetinných míst
+function formatNumber(value, type) {
+  if (typeof value !== 'number') return value;
+  
+  switch(type) {
+    case 'pevnost':
+      return value.toFixed(1); // 1 desetinné místo pro pevnosti
+    case 'modul':
+      return Math.round(value); // celé číslo pro modul pružnosti
+    case 'pretvoreni':
+      return value.toFixed(2); // 2 desetinná místa pro přetvoření
+    default:
+      return value;
+  }
 }
 
 function generovatBetonoveTabulky() {
@@ -69,36 +95,41 @@ function generovatBetonoveTabulky() {
     .then(properties => {
       // Generování dat pro tabulky
       const prvek = [
-        { nazev: "Pevnostní třída", znacka: "-", hodnota: tridaBetonu },
+        { nazev: "Pevnostní třída betonu", znacka: "-", hodnota: tridaBetonu },
+        { nazev: "Koeficient teplotní roztažnosti betonu", znacka: "α", hodnota: properties.α },
         { nazev: "Poissonův součinitel", znacka: "μ", hodnota: properties.v },
-        { nazev: "Dílčí součinitel spolehlivosti", znacka: "γ<sub>c</sub>", hodnota: properties.γc }
+        { nazev: "Dílčí součinitel spolehlivosti betonu", znacka: "γ<sub>c</sub>", hodnota: properties.γc },
+        { nazev: "Dílčí součinitel spolehlivosti betonářské výztuže", znacka: "γ<sub>s</sub>", hodnota: properties.γs }
       ];
 
       const pevnostTlak = [
-        { nazev: "Charakteristická pevnost v tlaku", znacka: "f<sub>ck</sub>", hodnota: properties.fck, jednotky: "MPa" },
-        { nazev: "Střední hodnota pevnosti v tlaku", znacka: "f<sub>cm</sub>", hodnota: properties.fcm, jednotky: "MPa" }
+        { nazev: "Charakteristická pevnost v tlaku", znacka: "f<sub>ck</sub>", hodnota: formatNumber(properties.fck, 'pevnost'), jednotky: "MPa" },
+        { nazev: "Návrhová pevnost v tlaku", znacka: "f<sub>cd</sub>", hodnota: formatNumber(properties.fcd, 'pevnost'), jednotky: "MPa" },
+        { nazev: "Charakteristická krychelná pevnost v tlaku", znacka: "f<sub>ck,cube</sub>", hodnota: formatNumber(properties.fckcube, 'pevnost'), jednotky: "MPa" },
+        { nazev: "Střední hodnota pevnosti v tlaku", znacka: "f<sub>cm</sub>", hodnota: formatNumber(properties.fcm, 'pevnost'), jednotky: "MPa" }
       ];
 
       const pevnostTah = [
-        { nazev: "Střední hodnota pevnosti v tahu", znacka: "f<sub>ctm</sub>", hodnota: properties.fctm, jednotky: "MPa" },
-        { nazev: "Charakteristická pevnost v tahu (5%)", znacka: "f<sub>ctk,0.05</sub>", hodnota: properties.fctk005, jednotky: "MPa" },
-        { nazev: "Charakteristická pevnost v tahu (95%)", znacka: "f<sub>ctk,0.95</sub>", hodnota: properties.fctk095, jednotky: "MPa" }
+        { nazev: "Střední hodnota pevnosti v tahu", znacka: "f<sub>ctm</sub>", hodnota: formatNumber(properties.fctm, 'pevnost'), jednotky: "MPa" },
+        { nazev: "Charakteristická pevnost v tahu (5%)", znacka: "f<sub>ctk,0.05</sub>", hodnota: formatNumber(properties.fctk005, 'pevnost'), jednotky: "MPa" },
+        { nazev: "Návrhová pevnost v tahu", znacka: "f<sub>ctd</sub>", hodnota: formatNumber(properties.fctd, 'pevnost'), jednotky: "MPa" },
+        { nazev: "Charakteristická pevnost v tahu (95%)", znacka: "f<sub>ctk,0.95</sub>", hodnota: formatNumber(properties.fctk095, 'pevnost'), jednotky: "MPa" }
       ];
 
       const modulPruznosti = [
-        { nazev: "Sečnový modul pružnosti", znacka: "E<sub>cm</sub>", hodnota: properties.Ecm, jednotky: "GPa" }
+        { nazev: "Sečnový modul pružnosti", znacka: "E<sub>cm</sub>", hodnota: formatNumber(properties.Ecm, 'modul'), jednotky: "GPa" }
       ];
 
       const mezniPretvoreni = [
-        { nazev: "Přetvoření při maximálním napětí", znacka: "ε<sub>c3</sub>", hodnota: properties.εc3, jednotky: "‰" },
-        { 
-          nazev: "Mezní přetvoření", 
-          znacka: "ε<sub>cu3</sub>", 
-          hodnota: properties.εcu3, 
-          jednotky: "‰",
+        { nazev: "Přetvoření při dosažení maximálního napětí pro parabolický diagram", znacka: "ε<sub>c1</sub>", hodnota: formatNumber(properties.εc1, 'pretvoreni'), jednotky: "‰" },
+        { nazev: "Mezní přetvoření pro parabolický diagram", znacka: "ε<sub>cu1</sub>", hodnota: formatNumber(properties.εcu1, 'pretvoreni'), jednotky: "‰" },
+        { nazev: "Přetvoření při dosažení maximálního napětí pro bilineární diagram", znacka: "ε<sub>c2</sub>", hodnota: formatNumber(properties.εc2, 'pretvoreni'), jednotky: "‰" },
+        { nazev: "Mezní přetvoření pro bilineární diagram", znacka: "ε<sub>cu2</sub>", hodnota: formatNumber(properties.εcu2, 'pretvoreni'), jednotky: "‰" },
+        { nazev: "Exponent", znacka: "n", hodnota: formatNumber(properties.n, 'pretvoreni'), jednotky: "-" },
+        { nazev: "Přetvoření při maximálním napětí", znacka: "ε<sub>c3</sub>", hodnota: formatNumber(properties.εc3, 'pretvoreni'), jednotky: "‰" },
+        { nazev: "Mezní přetvoření", znacka: "ε<sub>cu3</sub>", hodnota: formatNumber(properties.εcu3, 'pretvoreni'), jednotky: "‰", 
           info: "Mezní přetvoření εcu3 je maximální dovolené poměrné stlačení betonu v tlaku. Tato hodnota je důležitá pro mezní stav únosnosti a používá se při návrhu železobetonových konstrukcí. Představuje bod, kdy dochází k porušení betonu v tlaku.",
-          showImage: true
-        }
+          showImage: true }
       ];
 
       // Zobrazení tabulek podle filtru
