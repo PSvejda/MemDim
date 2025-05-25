@@ -39,11 +39,11 @@ function nacistDataZExcelu(tridaBetonu) {
           Ecm: 13,     // řádek 13 pro Ecm
           εc3: 19,     // řádek 19 pro Ec3
           εcu3: 20,    // řádek 20 pro Ecu3
-          εc1: 15,     // řádek 15 pro Ec1
-          εcu1: 16,    // řádek 16 pro Ecu1
-          εc2: 17,     // řádek 17 pro Ec2
-          εcu2: 18,    // řádek 18 pro Ecu2
-          n: 14        // řádek 14 pro n
+          εc1: 14,     // řádek 15 pro Ec1
+          εcu1: 15,    // řádek 16 pro Ecu1
+          εc2: 16,     // řádek 17 pro Ec2
+          εcu2: 17,    // řádek 18 pro Ecu2
+          n: 18        // řádek 14 pro n
         };
 
         properties = {};
