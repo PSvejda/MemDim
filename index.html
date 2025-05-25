@@ -62,6 +62,16 @@
         <select id="stena"></select>
       </div>
     
+      <div class="form-group">
+        <label for="ocel">Třída oceli:</label>
+        <select id="ocel">
+          <option value="S235">S235</option>
+          <option value="S275">S275</option>
+          <option value="S355">S355</option>
+          <option value="S460">S460</option>
+        </select>
+      </div>
+
       <div class="button-container">
         <button onclick="generovatTabulky(); generovatObrazek()">Generovat Hodnoty</button>
       </div>
@@ -87,6 +97,10 @@
       <!-- Tables for steel sections -->
       <div class="table-container" id="prvek-container">
         <table id="prvek-table"></table>
+      </div>
+
+      <div class="table-container" id="material-container" style="display: none;">
+        <table id="material-table"></table>
       </div>
 
       <div class="table-container" id="dimenze-container" style="display: none;">

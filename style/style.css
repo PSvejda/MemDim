@@ -364,3 +364,40 @@ width: 20%; /* 1 part */
   display: none;
 }
 
+.ohyb-container {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.ohyb-table {
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .ohyb-container {
+        flex-direction: column;
+    }
+}
+
+#prvek-table td:nth-child(1) {
+    width: 40%;
+    text-align: left;
+}
+
+#prvek-table td:nth-child(2) {
+    width: 30%;
+    text-align: center;
+}
+
+#prvek-table td:nth-child(3) {
+    width: 30%;
+    text-align: center;
+}
+
+#prvek-table th {
+    text-align: center;
+}
+
+
+
