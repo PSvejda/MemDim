@@ -5,6 +5,8 @@ const velikostiPrurezu = {
   "TR": ["80", "21,3", "22"],
   "OBD": ["50 x 30", "60 x 40", "70 x 40"]
 };
+  
+
 
 // Definice materiálových vlastností
 const materialProperties = {
