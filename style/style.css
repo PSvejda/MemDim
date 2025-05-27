@@ -78,7 +78,7 @@ color: #333;
 h2 {
 text-align: center;
 color: #a39d9d;
-margin-top: -8px;
+margin-top: -19px;
 }
 
 
@@ -397,6 +397,14 @@ width: 20%; /* 1 part */
 
 #prvek-table th {
     text-align: center;
+}
+
+.header-icon {
+  height: 40px;
+  vertical-align: middle;
+  margin-left: 10px;
+  position: relative;
+  top: -2px; /* Jemné doladění vertikální pozice */
 }
 
 
