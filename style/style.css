@@ -71,8 +71,9 @@ body {
 /* Zbytek CSS zůstává stejný */
 
 h1 {
-text-align: center;
-color: #333;
+    text-align: center;
+    color: #333;
+    position: relative;
 }
 
 h2 {
@@ -302,6 +303,9 @@ width: 20%; /* 1 part */
 .container {
     width: 70%; /* Pro desktopová zobrazení */
 }
+.content {
+        margin-top: 80px; /* Increased margin for mobile devices */
+    }
 
 }  
 
@@ -378,6 +382,9 @@ width: 20%; /* 1 part */
     .ohyb-container {
         flex-direction: column;
     }
+    .content {
+        margin-top: 80px; /* Increased margin for mobile devices */
+    }
 }
 
 #prvek-table td:nth-child(1) {
@@ -400,11 +407,12 @@ width: 20%; /* 1 part */
 }
 
 .header-icon {
-  height: 40px;
-  vertical-align: middle;
-  margin-left: 10px;
-  position: relative;
-  top: -2px; /* Jemné doladění vertikální pozice */
+    height: 40px;
+    vertical-align: middle;
+    position: absolute;
+    margin-left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 

@@ -689,11 +689,12 @@ function zobrazTabulkyproOBD(prvek, dimenzeOBD, plocha, vlastnostiOBD, ohybMekka
         var ohybTable = `
             <table>
                 <tr>
-                    <th colspan="4">OHYB OKOLO MĚKKÉ OSY</th>
-                    <th colspan="4">OHYB OKOLO TUHÉ OSY</th>
+                    <th colspan="4">OHYB</th>
                 </tr>
                 <tr>
-                    <th>S235</th><th>S275</th><th>S355</th><th>S460</th>
+                    <th colspan="4">MEKKA OSA</th>
+                </tr>
+                <tr>
                     <th>S235</th><th>S275</th><th>S355</th><th>S460</th>
                 </tr>
                 <tr>
@@ -701,6 +702,14 @@ function zobrazTabulkyproOBD(prvek, dimenzeOBD, plocha, vlastnostiOBD, ohybMekka
                     <td>${ohybMekka.find(item => item.nazev === "S275")?.hodnota || "-"}</td>
                     <td>${ohybMekka.find(item => item.nazev === "S355")?.hodnota || "-"}</td>
                     <td>${ohybMekka.find(item => item.nazev === "S460")?.hodnota || "-"}</td>
+                </tr>
+                <tr>
+                    <th colspan="4">TUHA OSA</th>
+                </tr>
+                <tr>
+                    <th>S235</th><th>S275</th><th>S355</th><th>S460</th>
+                </tr>
+                <tr>
                     <td>${ohybTuha.find(item => item.nazev === "S235")?.hodnota || "-"}</td>
                     <td>${ohybTuha.find(item => item.nazev === "S275")?.hodnota || "-"}</td>
                     <td>${ohybTuha.find(item => item.nazev === "S355")?.hodnota || "-"}</td>
