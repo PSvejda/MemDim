@@ -442,6 +442,9 @@ width: 20%; /* 1 part */
     color: #666;
     cursor: help;
     font-size: 16px;
+    display: inline-block;
+    margin-left: 5px;
+    font-weight: normal;
 }
 
 .tooltip-content {
