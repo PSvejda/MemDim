@@ -20,6 +20,10 @@
     const betonScript = document.createElement("script");
     betonScript.src = `scripts/beton.js?v=${verze}`;
     document.head.appendChild(betonScript);
+
+    const drevoScript = document.createElement("script");
+    drevoScript.src = `scripts/drevo.js?v=${verze}`;
+    document.head.appendChild(drevoScript);
   </script>
 </head>
 <body onload="aktualizovatVelikosti()">
@@ -210,9 +214,123 @@
 
     <!-- Dřevo content -->
     <div id="Drevo-content" class="content" style="display: none;">
-      <h1>Dřevo <img src="icons/wood.png" alt="Wood Icon" class="header-icon"></h1></h1>
+      <h1>Dřevo <img src="icons/wood.png" alt="Wood Icon" class="header-icon"></h1>
       <h2>Online statické tabulky průřezů</h2>
-      <p>Tuto stránku teprve připravujeme</p>
+      
+      <div class="form-group">
+        <label for="drevo-trida">Pevnostní třída dřeva:</label>
+        <select id="drevo-trida">
+          <option value="C14">C14</option>
+          <option value="C16">C16</option>
+          <option value="C18">C18</option>
+          <option value="C20">C20</option>
+          <option value="C22">C22</option>
+          <option value="C24">C24</option>
+          <option value="C27">C27</option>
+          <option value="C30">C30</option>
+          <option value="C35">C35</option>
+          <option value="C40">C40</option>
+          <option value="C45">C45</option>
+          <option value="C50">C50</option>
+          <option value="D30">D30</option>
+          <option value="D35">D35</option>
+          <option value="D40">D40</option>
+          <option value="D45">D45</option>
+          <option value="D50">D50</option>
+          <option value="D60">D60</option>
+          <option value="D70">D70</option>
+          <option value="GL20c">GL20c</option>
+          <option value="GL22c">GL22c</option>
+          <option value="GL24c">GL24c</option>
+          <option value="GL26c">GL26c</option>
+          <option value="GL28c">GL28c</option>
+          <option value="GL30c">GL30c</option>
+          <option value="GL32c">GL32c</option>
+          <option value="GL20h">GL20h</option>
+          <option value="GL22h">GL22h</option>
+          <option value="GL24h">GL24h</option>
+          <option value="GL26h">GL26h</option>
+          <option value="GL28h">GL28h</option>
+          <option value="GL30h">GL30h</option>
+          <option value="GL32h">GL32h</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="drevo-trida-provozu">Třída provozu:
+          <div class="tooltip-container">
+            <span class="tooltip-icon">ⓘ</span>
+            <div class="tooltip-content">
+              <p><strong>Třída 1 - Suchý provoz:</strong> Vnitřní prostředí s teplotou 20°C a relativní vlhkostí vzduchu nepřesahující 65% po většinu roku.</p>
+              <p><strong>Třída 2 - Venkovní provoz:</strong> Vnitřní prostředí s teplotou 20°C a relativní vlhkostí vzduchu nepřesahující 85% po většinu roku.</p>
+              <p><strong>Třída 3 - Mokrý provoz:</strong> Vnější prostředí nebo vnitřní prostředí s vyšší vlhkostí než třída 2.</p>
+            </div>
+          </div>
+        </label>
+        <select id="drevo-trida-provozu">
+          <option value="1">1 - Suchý provoz</option>
+          <option value="2">2 - Venkovní provoz</option>
+          <option value="3">3 - Mokrý provoz</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="drevo-doba-zatizeni">Doba zatížení:
+          <div class="tooltip-container">
+            <span class="tooltip-icon">ⓘ</span>
+            <div class="tooltip-content">
+              <p><strong>Trvalé:</strong> Zatížení působící po celou dobu životnosti konstrukce (např. vlastní tíha).</p>
+              <p><strong>Dlouhodobé:</strong> Zatížení působící po dobu několika měsíců (např. skladované materiály).</p>
+              <p><strong>Středně dlouhé:</strong> Zatížení působící po dobu několika týdnů (např. sníh).</p>
+              <p><strong>Krátkodobé:</strong> Zatížení působící po dobu několika hodin až dnů (např. užitné zatížení).</p>
+              <p><strong>Okamžité:</strong> Zatížení působící po dobu několika sekund až minut (např. vítr).</p>
+            </div>
+          </div>
+        </label>
+        <select id="drevo-doba-zatizeni">
+          <option value="trvale">Trvalé</option>
+          <option value="dlouhodobe">Dlouhodobé</option>
+          <option value="strednedlouhe">Středně dlouhé</option>
+          <option value="kratkodobe">Krátkodobé</option>
+          <option value="okamzite">Okamžité</option>
+        </select>
+      </div>
+
+      <div class="button-container">
+        <button onclick="generovatDrevoTabulky()">Generovat Hodnoty</button>
+      </div>
+
+      <!-- Filter for wood properties -->
+      <div class="filter-container" id="drevo-filter-container" style="display: none;">
+        <label for="drevo-filtr">Filtr:</label>
+        <select id="drevo-filtr" onchange="filterDrevoTables()">
+          <option value="all">Vše</option>
+          <option value="pevnost">PEVNOST</option>
+          <option value="modulPruznosti">MODUL PRUŽNOSTI</option>
+          <option value="hustota">HUSTOTA</option>
+        </select>
+      </div>
+
+      <!-- Containers for the wood property tables -->
+      <div id="drevo-tables-container">
+        <div class="table-container" id="drevo-pevnost-container" style="display: none;">
+          <table id="drevo-pevnost-table"></table>
+        </div>
+        <div class="table-container" id="drevo-modul-pruznosti-container" style="display: none;">
+           <table id="drevo-modul-pruznosti-table"></table>
+        </div>
+        <div class="table-container" id="drevo-hustota-container" style="display: none;">
+            <table id="drevo-hustota-table"></table>
+        </div>
+      </div>
+      
+      <!-- Add filter and export buttons later if needed -->
+
+      <!-- Export buttons container -->
+      <div class="export_button-container" id="drevo-export-container" style="display: none;">
+        <button onclick="exportDrevoKomplet()" class="export-button">Exportovat Všechny Hodnoty</button>
+        <button onclick="exportDrevoFiltr()" class="export-button">Exportovat Zobrazené Hodnoty</button>
+      </div>
 
       <div class="footer">
         <p>© 2025 MemDim</p>
