@@ -450,10 +450,7 @@ width: 20%; /* 1 part */
 .tooltip-content {
     visibility: hidden;
     position: absolute;
-    z-index: 1;
-    left: 100%;
-    top: 50%;
-    transform: translateY(-50%);
+    z-index: 1000;
     background-color: #5c5c5c;
     color: white;
     text-align: left;
@@ -465,6 +462,11 @@ width: 20%; /* 1 part */
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     font-weight: 300;
     font-family: 'Segoe UI', Arial, sans-serif;
+    max-width: 90vw;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 10px;
 }
 
 .tooltip-content p {
@@ -484,17 +486,52 @@ width: 20%; /* 1 part */
     visibility: visible;
 }
 
-/* Update the tooltip arrow color to match the new background */
+/* Update the tooltip arrow */
 .tooltip-content::before {
     content: "";
     position: absolute;
     top: 50%;
-    right: 100%;
-    margin-top: -5px;
+    left: -10px;
+    transform: translateY(-50%);
     border-width: 5px;
     border-style: solid;
-    border-color: transparent #4a4a4a transparent transparent;
+    border-color: transparent #5c5c5c transparent transparent;
 }
 
+/* Add media query for mobile devices */
+@media (max-width: 768px) {
+    .tooltip-content {
+        width: 250px;
+        font-size: 13px;
+        left: 50%;
+        transform: translateX(-50%);
+        top: auto;
+        bottom: 100%;
+        margin-left: 0;
+        margin-bottom: 10px;
+    }
+    
+    .tooltip-content::before {
+        top: auto;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-color: #5c5c5c transparent transparent transparent;
+    }
+    
+    .tooltip-container {
+        margin-left: 4px;
+    }
+}
 
+/* Add JavaScript positioning for tooltips */
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+    margin-left: 8px;
+}
 
+.tooltip-container:hover .tooltip-content {
+    visibility: visible;
+    /* Position will be set by JavaScript */
+}
