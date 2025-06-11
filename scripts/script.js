@@ -420,7 +420,7 @@ function zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatříděn�
         });
 
         // Přidání mezí kluzu a pevnosti
-        materialTable += `<tr><td>Mez kluzu</td><td>f<sub>y</sub></td><td>${materialProperties.mezeKluzu[ocelTrida]}</td><td>MPa</td></tr>`;
+        materialTable += `<tr><td>Mez kluzu<span class="info-icon" onclick='zobrazitInfo("Mez kluzu je hodnota napětí, při které materiál začíná plasticky deformovat. Je to důležitá charakteristika pro posouzení únosnosti ocelových konstrukcí.", true)'>ⓘ</span></td><td>f<sub>y</sub></td><td>${materialProperties.mezeKluzu[ocelTrida]}</td><td>MPa</td></tr>`;
         materialTable += `<tr><td>Mez pevnosti</td><td>f<sub>u</sub></td><td>${materialProperties.mezePevnosti[ocelTrida]}</td><td>MPa</td></tr>`;
 
         // Přidání dílčích součinitelů
@@ -525,7 +525,7 @@ function zobrazTabulky(prvek, dimenze, plocha, vlastnosti, ohyb, tlak, filtr) {
         });
 
         // Přidání mezí kluzu a pevnosti
-        materialTable += `<tr><td>Mez kluzu</td><td>f<sub>y</sub></td><td>${materialProperties.mezeKluzu[ocelTrida]}</td><td>MPa</td></tr>`;
+        materialTable += `<tr><td>Mez kluzu<span class="info-icon" onclick='zobrazitInfo("Mez kluzu je hodnota napětí, při které materiál začíná plasticky deformovat. Je to důležitá charakteristika pro posouzení únosnosti ocelových konstrukcí.", true)'>ⓘ</span></td><td>f<sub>y</sub></td><td>${materialProperties.mezeKluzu[ocelTrida]}</td><td>MPa</td></tr>`;
         materialTable += `<tr><td>Mez pevnosti</td><td>f<sub>u</sub></td><td>${materialProperties.mezePevnosti[ocelTrida]}</td><td>MPa</td></tr>`;
 
         // Přidání dílčích součinitelů
@@ -636,7 +636,7 @@ function zobrazTabulkyproOBD(prvek, dimenzeOBD, plocha, vlastnostiOBD, ohybMekka
         });
 
         // Přidání mezí kluzu a pevnosti
-        materialTable += `<tr><td>Mez kluzu</td><td>f<sub>y</sub></td><td>${materialProperties.mezeKluzu[ocelTrida]}</td><td>MPa</td></tr>`;
+        materialTable += `<tr><td>Mez kluzu<span class="info-icon" onclick='zobrazitInfo("Mez kluzu je hodnota napětí, při které materiál začíná plasticky deformovat. Je to důležitá charakteristika pro posouzení únosnosti ocelových konstrukcí.", true)'>ⓘ</span></td><td>f<sub>y</sub></td><td>${materialProperties.mezeKluzu[ocelTrida]}</td><td>MPa</td></tr>`;
         materialTable += `<tr><td>Mez pevnosti</td><td>f<sub>u</sub></td><td>${materialProperties.mezePevnosti[ocelTrida]}</td><td>MPa</td></tr>`;
 
         // Přidání dílčích součinitelů

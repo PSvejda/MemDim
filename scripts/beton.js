@@ -103,17 +103,25 @@ function generovatBetonoveTabulky() {
       ];
 
       const pevnostTlak = [
-        { nazev: "Charakteristická pevnost v tlaku", znacka: "f<sub>ck</sub>", hodnota: formatNumber(properties.fck, 'pevnost'), jednotky: "MPa" },
-        { nazev: "Návrhová pevnost v tlaku", znacka: "f<sub>cd</sub>", hodnota: formatNumber(properties.fcd, 'pevnost'), jednotky: "MPa" },
-        { nazev: "Charakteristická krychelná pevnost v tlaku", znacka: "f<sub>ck,cube</sub>", hodnota: formatNumber(properties.fckcube, 'pevnost'), jednotky: "MPa" },
-        { nazev: "Střední hodnota pevnosti v tlaku", znacka: "f<sub>cm</sub>", hodnota: formatNumber(properties.fcm, 'pevnost'), jednotky: "MPa" }
+        { nazev: "Charakteristická pevnost v tlaku", znacka: "f<sub>ck</sub>", hodnota: formatNumber(properties.fck, 'pevnost'), jednotky: "MPa",
+          info: "Charakteristická pevnost v tlaku je základní hodnota pro návrh betonových konstrukcí.<br><br><i>f<sub>ck</sub> = f<sub>ck,cube</sub> - 8 MPa</i>" },
+        { nazev: "Návrhová pevnost v tlaku", znacka: "f<sub>cd</sub>", hodnota: formatNumber(properties.fcd, 'pevnost'), jednotky: "MPa",
+          info: "Návrhová pevnost v tlaku se vypočítá jako:<br><br><i>f<sub>cd</sub> = f<sub>ck</sub> / γ<sub>c</sub></i><br><br>kde γ<sub>c</sub> je dílčí součinitel spolehlivosti betonu (1,5)" },
+        { nazev: "Charakteristická krychelná pevnost v tlaku", znacka: "f<sub>ck,cube</sub>", hodnota: formatNumber(properties.fckcube, 'pevnost'), jednotky: "MPa",
+          info: "Charakteristická krychelná pevnost v tlaku je základní hodnota měřená na krychlích.<br><br><i>f<sub>ck,cube</sub> = f<sub>ck</sub> + 8 MPa</i>" },
+        { nazev: "Střední hodnota pevnosti v tlaku", znacka: "f<sub>cm</sub>", hodnota: formatNumber(properties.fcm, 'pevnost'), jednotky: "MPa",
+          info: "Střední hodnota pevnosti v tlaku se vypočítá jako:<br><br><i>f<sub>cm</sub> = f<sub>ck</sub> + 8 MPa</i>" }
       ];
 
       const pevnostTah = [
-        { nazev: "Střední hodnota pevnosti v tahu", znacka: "f<sub>ctm</sub>", hodnota: formatNumber(properties.fctm, 'pevnost'), jednotky: "MPa" },
-        { nazev: "Charakteristická pevnost v tahu (5%)", znacka: "f<sub>ctk,0.05</sub>", hodnota: formatNumber(properties.fctk005, 'pevnost'), jednotky: "MPa" },
-        { nazev: "Návrhová pevnost v tahu", znacka: "f<sub>ctd</sub>", hodnota: formatNumber(properties.fctd, 'pevnost'), jednotky: "MPa" },
-        { nazev: "Charakteristická pevnost v tahu (95%)", znacka: "f<sub>ctk,0.95</sub>", hodnota: formatNumber(properties.fctk095, 'pevnost'), jednotky: "MPa" }
+        { nazev: "Střední hodnota pevnosti v tahu", znacka: "f<sub>ctm</sub>", hodnota: formatNumber(properties.fctm, 'pevnost'), jednotky: "MPa",
+          info: "Střední hodnota pevnosti v tahu se vypočítá jako:<br><br><i>f<sub>ctm</sub> = 0,30 × f<sub>ck</sub><sup>2/3</sup></i><br><br>pro betony do třídy C50/60" },
+        { nazev: "Charakteristická pevnost v tahu (5%)", znacka: "f<sub>ctk,0.05</sub>", hodnota: formatNumber(properties.fctk005, 'pevnost'), jednotky: "MPa",
+          info: "Charakteristická pevnost v tahu (5%) se vypočítá jako:<br><br><i>f<sub>ctk,0.05</sub> = 0,7 × f<sub>ctm</sub></i>" },
+        { nazev: "Návrhová pevnost v tahu", znacka: "f<sub>ctd</sub>", hodnota: formatNumber(properties.fctd, 'pevnost'), jednotky: "MPa",
+          info: "Návrhová pevnost v tahu se vypočítá jako:<br><br><i>f<sub>ctd</sub> = f<sub>ctk,0.05</sub> / γ<sub>c</sub></i><br><br>kde γ<sub>c</sub> je dílčí součinitel spolehlivosti betonu (1,5)" },
+        { nazev: "Charakteristická pevnost v tahu (95%)", znacka: "f<sub>ctk,0.95</sub>", hodnota: formatNumber(properties.fctk095, 'pevnost'), jednotky: "MPa",
+          info: "Charakteristická pevnost v tahu (95%) se vypočítá jako:<br><br><i>f<sub>ctk,0.95</sub> = 1,3 × f<sub>ctm</sub></i>" }
       ];
 
       const modulPruznosti = [
@@ -121,15 +129,19 @@ function generovatBetonoveTabulky() {
       ];
 
       const mezniPretvoreni = [
-        { nazev: "Přetvoření při dosažení maximálního napětí pro parabolický diagram", znacka: "ε<sub>c1</sub>", hodnota: formatNumber(properties.εc1, 'pretvoreni'), jednotky: "‰" },
+        { nazev: "Přetvoření při dosažení maximálního napětí pro parabolický diagram", znacka: "ε<sub>c1</sub>", hodnota: formatNumber(properties.εc1, 'pretvoreni'), jednotky: "‰", 
+          info: "Přetvoření εc1 je hodnota, při které beton dosahuje maximálního napětí v tlaku pro reálný diagram napětí-přetvoření.",
+          showImage: true },
         { nazev: "Mezní přetvoření pro parabolický diagram", znacka: "ε<sub>cu1</sub>", hodnota: formatNumber(properties.εcu1, 'pretvoreni'), jednotky: "‰" },
-        { nazev: "Přetvoření při dosažení maximálního napětí pro bilineární diagram", znacka: "ε<sub>c2</sub>", hodnota: formatNumber(properties.εc2, 'pretvoreni'), jednotky: "‰" },
+        { nazev: "Přetvoření při dosažení maximálního napětí pro bilineární diagram", znacka: "ε<sub>c2</sub>", hodnota: formatNumber(properties.εc2, 'pretvoreni'), jednotky: "‰",
+          info: "Přetvoření εc2 je hodnota, při které beton dosahuje maximálního napětí v tlaku pro parabolicko-rektangulární diagram napětí-přetvoření.",
+          showImage: true },
         { nazev: "Mezní přetvoření pro bilineární diagram", znacka: "ε<sub>cu2</sub>", hodnota: formatNumber(properties.εcu2, 'pretvoreni'), jednotky: "‰" },
         { nazev: "Exponent", znacka: "n", hodnota: formatNumber(properties.n, 'pretvoreni'), jednotky: "-" },
-        { nazev: "Přetvoření při maximálním napětí", znacka: "ε<sub>c3</sub>", hodnota: formatNumber(properties.εc3, 'pretvoreni'), jednotky: "‰" },
-        { nazev: "Mezní přetvoření", znacka: "ε<sub>cu3</sub>", hodnota: formatNumber(properties.εcu3, 'pretvoreni'), jednotky: "‰", 
-          info: "Mezní přetvoření εcu3 je maximální dovolené poměrné stlačení betonu v tlaku. Tato hodnota je důležitá pro mezní stav únosnosti a používá se při návrhu železobetonových konstrukcí. Představuje bod, kdy dochází k porušení betonu v tlaku.",
-          showImage: true }
+        { nazev: "Přetvoření při maximálním napětí", znacka: "ε<sub>c3</sub>", hodnota: formatNumber(properties.εc3, 'pretvoreni'), jednotky: "‰",
+          info: "Přetvoření εc3 je hodnota, při které beton dosahuje maximálního napětí v tlaku pro bilineární diagram napětí-přetvoření.",
+          showImage: true },
+        { nazev: "Mezní přetvoření", znacka: "ε<sub>cu3</sub>", hodnota: formatNumber(properties.εcu3, 'pretvoreni'), jednotky: "‰"}
       ];
 
       // Zobrazení tabulek podle filtru
@@ -369,10 +381,19 @@ const modalHTML = `
   <div id="infoModal" class="modal-overlay">
     <div class="modal-content">
       <span class="modal-close" onclick="zavritInfo()">&times;</span>
-      <p id="modalText"></p>
+      <p id="modalText" style="text-align: center;"></p>
       <div id="modalImage" style="text-align: center; margin-top: 20px;"></div>
     </div>
   </div>
+  <style>
+    .formula {
+      font-weight: normal;
+      font-style: normal;
+    }
+    .modal-content {
+      text-align: center;
+    }
+  </style>
 `;
 
 // Zajistit, že modální okno existuje v DOM
@@ -392,11 +413,35 @@ function zobrazitInfo(text, showImage = false) {
     return;
   }
   
-  modalText.textContent = text;
+  // Nahradit <i> tagy za <span> s třídou 'formula'
+  const formattedText = text.replace(/<i>(.*?)<\/i>/g, '<span class="formula">$1</span>');
+  modalText.innerHTML = formattedText;
   
   // Zobrazit nebo skrýt obrázek podle parametru
   if (showImage) {
-    modalImage.innerHTML = '<img src="Pictures/Pracovni_Diagram_Realny.png" alt="Pracovní diagram" style="max-width: 100%; height: auto;">';
+    // Určit, který obrázek zobrazit na základě názvu hodnoty
+    let imagePath = 'Pictures/Pracovni_Diagram_Realny.png'; // výchozí obrázek
+    
+    // Získat název hodnoty z textu
+    const nazevMatch = text.match(/Přetvoření (εc\d+)/);
+    if (nazevMatch) {
+      const nazev = nazevMatch[1];
+      switch(nazev) {
+        case 'εc1':
+          imagePath = 'Pictures/Pracovni_Diagram_Realny.png';
+          break;
+        case 'εc2':
+          imagePath = 'Pictures/Pracovni_Diagram_Parabolicko_Rektangulární.png';
+          break;
+        case 'εc3':
+          imagePath = 'Pictures/Pracovni_Diagram_Bilineární.png';
+          break;
+      }
+    } else if (text.includes('Mez kluzu')) {
+      imagePath = 'Pictures/Pracovní_Diagram_Ocel.png';
+    }
+    
+    modalImage.innerHTML = `<img src="${imagePath}" alt="Pracovní diagram" style="max-width: 100%; height: auto;">`;
     modalImage.style.display = 'block';
   } else {
     modalImage.innerHTML = '';
