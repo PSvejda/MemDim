@@ -199,10 +199,15 @@ function zobrazitBetonoveTabulky(prvek, pevnostTlak, pevnostTah, modulPruznosti,
 
 function vytvorTabulku(data, title) {
   const table = document.createElement('table');
+  const isToggleActive = document.getElementById('beton-toggle-switch').classList.contains('active');
+  table.classList.toggle('velicina-hidden', !isToggleActive);
   
   // Zjistit, zda data obsahují jednotky
-  const maJednotky = data[0].hasOwnProperty('jednotky');
-  const pocetSloupcu = maJednotky ? 4 : 3;
+  const maJednotky = data.length > 0 && data[0].hasOwnProperty('jednotky');
+  let pocetSloupcu = maJednotky ? 4 : 3;
+  if (!isToggleActive) {
+    pocetSloupcu--;
+  }
   
   // Přidat hlavičku tabulky
   table.innerHTML = `
@@ -211,7 +216,7 @@ function vytvorTabulku(data, title) {
         <th colspan="${pocetSloupcu}" class="table-header">${title}</th>
       </tr>
       <tr>
-        <th>Veličina</th>
+        ${isToggleActive ? '<th>Veličina</th>' : ''}
         <th>Značka</th>
         <th>Hodnota</th>
         ${maJednotky ? '<th>Jednotky</th>' : ''}
@@ -222,7 +227,7 @@ function vytvorTabulku(data, title) {
         const escapedInfo = row.info ? row.info.replace(/"/g, '&quot;') : '';
         return `
           <tr>
-            <td>${row.nazev}${row.info ? `<span class="info-icon" onclick='zobrazitInfo("${escapedInfo}", ${row.showImage || false})'>ⓘ</span>` : ''}</td>
+            ${isToggleActive ? `<td>${row.nazev}${row.info ? `<span class="info-icon" onclick='zobrazitInfo("${escapedInfo}", ${row.showImage || false})'>ⓘ</span>` : ''}</td>` : ''}
             <td>${row.znacka}</td>
             <td>${row.hodnota}</td>
             ${maJednotky ? `<td>${row.jednotky}</td>` : ''}

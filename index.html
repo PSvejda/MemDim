@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Výběr průřezu a generování hodnot</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+
   <script>
     const verze = Date.now(); // aktuální čas jako verze
     const style = document.createElement("link");
@@ -24,9 +25,14 @@
     const drevoScript = document.createElement("script");
     drevoScript.src = `scripts/drevo.js?v=${verze}`;
     document.head.appendChild(drevoScript);
+
+    // Spuštění inicializace po načtení stránky
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeToggles();
+    });
   </script>
 </head>
-<body onload="aktualizovatVelikosti()">
+<body onload="aktualizovatVelikosti(); initializeToggles();">
 
   <div class="container">
     <!-- Dropdown menu -->
@@ -85,18 +91,27 @@
         <img id="section-image" src="" alt="Typ průřezu">
       </div>
 
-      <!-- Filter for table display -->
+      <!-- Filter for table display with toggle switch -->
       <div class="filter-container" id="filter-container" style="display: none;">
-        <label for="filtr">Filtr:</label>
-        <select id="filtr" onchange="generovatTabulky()">
-          <option value="all">Vše</option>
-          <option value="dimenze">DIMENZE</option>
-          <option value="plocha">PLOCHA</option>
-          <option value="vlastnosti">VLASTNOSTI</option>
-          <option value="ohyb">OHYB</option>
-          <option value="tlak">TLAK</option>
-          <option value="zatřídění">ZATŘÍDĚNÍ</option>
-        </select>
+        <div class="filter-toggle-container">
+          <div class="filter-section">
+            <label for="filtr">Filtr:</label>
+            <select id="filtr" onchange="generovatTabulky()">
+              <option value="all">Vše</option>
+              <option value="dimenze">DIMENZE</option>
+              <option value="plocha">PLOCHA</option>
+              <option value="vlastnosti">VLASTNOSTI</option>
+              <option value="ohyb">OHYB</option>
+              <option value="tlak">TLAK</option>
+              <option value="zatřídění">ZATŘÍDĚNÍ</option>
+            </select>
+          </div>
+          <div class="toggle-container">
+            <div class="toggle-switch active" id="toggle-switch" onclick="toggleFunction(event)">
+              <div class="toggle-slider"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Tables for steel sections -->
@@ -184,17 +199,26 @@
         <button onclick="window.open('https://www.ebeton.cz/specifikace/', '_blank')" class="znaceni-button">Značení Betonu</button>
       </div>
 
-      <!-- Filter for concrete properties -->
+      <!-- Filter for concrete properties with toggle switch -->
       <div class="filter-container" id="beton-filter-container" style="display: none;">
-        <label for="beton-filtr">Filtr:</label>
-        <select id="beton-filtr" onchange="generovatBetonoveTabulky()">
-          <option value="all">Vše</option>
-          <option value="prvek">PRVEK</option>
-          <option value="pevnostTlak">PEVNOST V TLAKU</option>
-          <option value="pevnostTah">PEVNOST V TAHU</option>
-          <option value="modulPruznosti">MODUL PRUŽNOSTI</option>
-          <option value="mezniPretvoreni">MEZNÍ PŘETVOŘENÍ</option>
-        </select>
+        <div class="filter-toggle-container">
+          <div class="filter-section">
+            <label for="beton-filtr">Filtr:</label>
+            <select id="beton-filtr" onchange="generovatBetonoveTabulky()">
+              <option value="all">Vše</option>
+              <option value="prvek">PRVEK</option>
+              <option value="pevnostTlak">PEVNOST V TLAKU</option>
+              <option value="pevnostTah">PEVNOST V TAHU</option>
+              <option value="modulPruznosti">MODUL PRUŽNOSTI</option>
+              <option value="mezniPretvoreni">MEZNÍ PŘETVOŘENÍ</option>
+            </select>
+          </div>
+          <div class="toggle-container">
+            <div class="toggle-switch active" id="beton-toggle-switch" onclick="toggleFunction(event)">
+              <div class="toggle-slider"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Tables container -->
@@ -294,15 +318,24 @@
         <button onclick="generovatDrevoTabulky()">Generovat Hodnoty</button>
       </div>
 
-      <!-- Filter for wood properties -->
+      <!-- Filter for wood properties with toggle switch -->
       <div class="filter-container" id="drevo-filter-container" style="display: none;">
-        <label for="drevo-filtr">Filtr:</label>
-        <select id="drevo-filtr" onchange="filterDrevoTables()">
-          <option value="all">Vše</option>
-          <option value="pevnost">PEVNOST</option>
-          <option value="modulPruznosti">MODUL PRUŽNOSTI</option>
-          <option value="hustota">HUSTOTA</option>
-        </select>
+        <div class="filter-toggle-container">
+          <div class="filter-section">
+            <label for="drevo-filtr">Filtr:</label>
+            <select id="drevo-filtr" onchange="filterDrevoTables()">
+              <option value="all">Vše</option>
+              <option value="pevnost">PEVNOST</option>
+              <option value="modulPruznosti">MODUL PRUŽNOSTI</option>
+              <option value="hustota">HUSTOTA</option>
+            </select>
+          </div>
+          <div class="toggle-container">
+            <div class="toggle-switch active" id="drevo-toggle-switch" onclick="toggleFunction(event)">
+              <div class="toggle-slider"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Containers for the wood property tables -->

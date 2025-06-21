@@ -151,10 +151,15 @@ function zobrazitDrevoTabulky(data, filtr) {
 // Helper function to create table HTML (similar to vytvorTabulku in beton.js)
 function vytvorDrevoTabulku(data, title, containerId) {
     const table = document.createElement('table');
+    const isToggleActive = document.getElementById('drevo-toggle-switch').classList.contains('active');
+    table.classList.toggle('velicina-hidden', !isToggleActive);
 
     // Determine if data includes units (which it should based on our structure)
     const maJednotky = data.length > 0 && data[0].hasOwnProperty('jednotky');
-    const pocetSloupcu = maJednotky ? 4 : 3; // Veličina, Značka, Hodnota, (Jednotky)
+    let pocetSloupcu = maJednotky ? 4 : 3; // Veličina, Značka, Hodnota, (Jednotky)
+    if (!isToggleActive) {
+        pocetSloupcu--;
+    }
 
     // Add table header
     table.innerHTML = `
@@ -163,7 +168,7 @@ function vytvorDrevoTabulku(data, title, containerId) {
         <th colspan="${pocetSloupcu}" class="table-header">${title}</th>
       </tr>
       <tr>
-        <th>Veličina</th>
+        ${isToggleActive ? '<th>Veličina</th>' : ''}
         <th>Značka</th>
         <th>Hodnota</th>
         ${maJednotky ? '<th>Jednotky</th>' : ''}
@@ -173,7 +178,7 @@ function vytvorDrevoTabulku(data, title, containerId) {
       ${data.map(row => {
         return `
           <tr>
-            <td>${row.nazev}</td>
+            ${isToggleActive ? `<td>${row.nazev}</td>` : ''}
             <td>${row.znacka}</td>
             <td>${row.hodnota}</td>
             ${maJednotky ? `<td>${row.jednotky}</td>` : ''}

@@ -1,3 +1,58 @@
+// Univerzální funkce pro posuvné tlačítko
+function toggleFunction(event) {
+  // Pokud je event předán, použij target element, jinak použij původní logiku
+  const toggleSwitch = event ? event.target.closest('.toggle-switch') : document.getElementById('toggle-switch');
+  
+  if (!toggleSwitch) return;
+  
+  const isActive = toggleSwitch.classList.contains('active');
+  
+  if (isActive) {
+    toggleSwitch.classList.remove('active');
+  } else {
+    toggleSwitch.classList.add('active');
+  }
+
+  // Re-generate tables based on which toggle was switched
+  if (toggleSwitch.id === 'toggle-switch') {
+    // Only regenerate if tables are visible
+    if (document.getElementById('filter-container').style.display !== 'none') {
+        generovatTabulky();
+    }
+  } else if (toggleSwitch.id === 'beton-toggle-switch') {
+    if (document.getElementById('beton-filter-container').style.display !== 'none') {
+        generovatBetonoveTabulky();
+    }
+  } else if (toggleSwitch.id === 'drevo-toggle-switch') {
+    if (document.getElementById('drevo-filter-container').style.display !== 'none') {
+        generovatDrevoTabulky();
+    }
+  }
+}
+
+// Funkce pro inicializaci posuvných tlačítek jako zapnutých
+function initializeToggles() {
+  // Hlavní toggle switch
+  const toggleSwitch = document.getElementById('toggle-switch');
+  if (toggleSwitch) {
+    toggleSwitch.classList.add('active');
+  }
+
+  // Beton toggle switch
+  const betonToggleSwitch = document.getElementById('beton-toggle-switch');
+  if (betonToggleSwitch) {
+    betonToggleSwitch.classList.add('active');
+  }
+
+  // Drevo toggle switch
+  const drevoToggleSwitch = document.getElementById('drevo-toggle-switch');
+  if (drevoToggleSwitch) {
+    drevoToggleSwitch.classList.add('active');
+  }
+}
+
+
+
 const velikostiPrurezu = {
   "IPE": ["80", "B", "C"],
   "HEA": ["1", "2", "3"],
@@ -388,6 +443,13 @@ function generovatTabulky() {
 
 
 function zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatřídění, filtr) {
+    const isToggleActive = document.getElementById('toggle-switch').classList.contains('active');
+    
+    // Dynamically add/remove class to tables for styling
+    ['prvek-table', 'material-table', 'dimenzeTR-table', 'plocha-table', 'vlastnostiTR-table', 'zatrideni-table'].forEach(id => {
+        document.getElementById(id).classList.toggle('velicina-hidden', !isToggleActive);
+    });
+
     // Nejdřív skryjeme všechny kontejnery
     document.getElementById('material-container').style.display = 'none';
     document.getElementById('dimenze-container').style.display = 'none';
@@ -400,9 +462,9 @@ function zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatříděn�
     document.getElementById('zatrideni-container').style.display = 'none';
 
     // Zobrazení tabulky PRVEK
-    var prvekTable = `<tr><th colspan=3>PRVEK</th></tr>`;
+    var prvekTable = `<tr><th colspan=${isToggleActive ? 3 : 2}>PRVEK</th></tr>`;
     prvek.forEach(function(item) {
-        prvekTable += `<tr><td>${item.nazev}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+        prvekTable += `<tr>${isToggleActive ? `<td>${item.nazev}</td>` : ''}<td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
     });
     document.getElementById('prvek-table').innerHTML = prvekTable;
 
@@ -411,21 +473,21 @@ function zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatříděn�
         document.getElementById('material-container').style.display = 'block';
         var ocelTrida = document.getElementById('ocel').value;
         
-        var materialTable = `<tr><th colspan=4>MATERIÁLOVÉ VLASTNOSTI</th></tr>
-        <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>`;
+        var materialTable = `<tr><th colspan=${isToggleActive ? 4 : 3}>MATERIÁLOVÉ VLASTNOSTI</th></tr>
+        <tr>${isToggleActive ? '<th>Název</th>' : ''}<th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>`;
 
         // Přidání konstantních hodnot
         Object.values(materialProperties.konstantniHodnoty).forEach(prop => {
-            materialTable += `<tr><td>${prop.nazev}</td><td>${prop.znacka}</td><td>${prop.hodnota}</td><td>${prop.jednotky}</td></tr>`;
+            materialTable += `<tr>${isToggleActive ? `<td>${prop.nazev}</td>` : ''}<td>${prop.znacka}</td><td>${prop.hodnota}</td><td>${prop.jednotky}</td></tr>`;
         });
 
         // Přidání mezí kluzu a pevnosti
-        materialTable += `<tr><td>Mez kluzu<span class="info-icon" onclick='zobrazitInfo("Mez kluzu je hodnota napětí, při které materiál začíná plasticky deformovat. Je to důležitá charakteristika pro posouzení únosnosti ocelových konstrukcí.", true)'>ⓘ</span></td><td>f<sub>y</sub></td><td>${materialProperties.mezeKluzu[ocelTrida]}</td><td>MPa</td></tr>`;
-        materialTable += `<tr><td>Mez pevnosti</td><td>f<sub>u</sub></td><td>${materialProperties.mezePevnosti[ocelTrida]}</td><td>MPa</td></tr>`;
+        materialTable += `<tr>${isToggleActive ? `<td>Mez kluzu<span class="info-icon" onclick='zobrazitInfo("Mez kluzu je hodnota napětí, při které materiál začíná plasticky deformovat. Je to důležitá charakteristika pro posouzení únosnosti ocelových konstrukcí.", true)'>ⓘ</span></td>` : ''}<td>f<sub>y</sub></td><td>${materialProperties.mezeKluzu[ocelTrida]}</td><td>MPa</td></tr>`;
+        materialTable += `<tr>${isToggleActive ? '<td>Mez pevnosti</td>' : ''}<td>f<sub>u</sub></td><td>${materialProperties.mezePevnosti[ocelTrida]}</td><td>MPa</td></tr>`;
 
         // Přidání dílčích součinitelů
         Object.values(materialProperties.dilciSoucinitele).forEach(soucinitel => {
-            materialTable += `<tr><td>${soucinitel.nazev}<span class="info-icon" onclick='zobrazitInfo("${soucinitel.popis}", false)'>ⓘ</span></td><td>${soucinitel.znacka}</td><td>${soucinitel.hodnota}</td><td>${soucinitel.jednotky}</td></tr>`;
+            materialTable += `<tr>${isToggleActive ? `<td>${soucinitel.nazev}<span class="info-icon" onclick='zobrazitInfo("${soucinitel.popis}", false)'>ⓘ</span></td>` : ''}<td>${soucinitel.znacka}</td><td>${soucinitel.hodnota}</td><td>${soucinitel.jednotky}</td></tr>`;
         });
 
         document.getElementById('material-table').innerHTML = materialTable;
@@ -435,11 +497,11 @@ function zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatříděn�
     if (filtr === 'all' || filtr === 'dimenze') {
         document.getElementById('dimenzeTR-container').style.display = 'block';
         var dimenzeTable = `
-            <tr><th colspan=4>DIMENZE</th></tr>
-            <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
+            <tr><th colspan=${isToggleActive ? 4 : 3}>DIMENZE</th></tr>
+            <tr>${isToggleActive ? '<th>Název</th>' : ''}<th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
         `;
         dimenzeTR.forEach(function(item) {
-            dimenzeTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+            dimenzeTable += `<tr>${isToggleActive ? `<td>${item.nazev}</td>` : ''}<td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
         });
         document.getElementById('dimenzeTR-table').innerHTML = dimenzeTable;
     } else {
@@ -449,11 +511,11 @@ function zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatříděn�
     if (filtr === 'all' || filtr === 'plocha') {
         document.getElementById('plocha-container').style.display = 'block';
         var plochaTable = `
-            <tr><th colspan=4>PLOCHA</th></tr>
-            <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
+            <tr><th colspan=${isToggleActive ? 4 : 3}>PLOCHA</th></tr>
+            <tr>${isToggleActive ? '<th>Název</th>' : ''}<th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
         `;
         plocha.forEach(function(item) {
-            plochaTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+            plochaTable += `<tr>${isToggleActive ? `<td>${item.nazev}</td>` : ''}<td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
         });
         document.getElementById('plocha-table').innerHTML = plochaTable;
     } else {
@@ -463,11 +525,11 @@ function zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatříděn�
     if (filtr === 'all' || filtr === 'vlastnosti') {
         document.getElementById('vlastnostiTR-container').style.display = 'block';
         var vlastnostiTable = `
-            <tr><th colspan=4>VLASTNOSTI</th></tr>
-            <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
+            <tr><th colspan=${isToggleActive ? 4 : 3}>VLASTNOSTI</th></tr>
+            <tr>${isToggleActive ? '<th>Název</th>' : ''}<th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
         `;
         vlastnostiTR.forEach(function(item) {
-            vlastnostiTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+            vlastnostiTable += `<tr>${isToggleActive ? `<td>${item.nazev}</td>` : ''}<td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
         });
         document.getElementById('vlastnostiTR-table').innerHTML = vlastnostiTable;
     } else {
@@ -493,6 +555,13 @@ function zobrazTabulkyproTR(prvek, dimenzeTR, plocha, vlastnostiTR, zatříděn�
 }
 
 function zobrazTabulky(prvek, dimenze, plocha, vlastnosti, ohyb, tlak, filtr) {
+    const isToggleActive = document.getElementById('toggle-switch').classList.contains('active');
+    
+    // Dynamically add/remove class to tables for styling
+    ['prvek-table', 'material-table', 'dimenze-table', 'plocha-table', 'vlastnosti-table', 'ohyb-table', 'tlak-table'].forEach(id => {
+        document.getElementById(id).classList.toggle('velicina-hidden', !isToggleActive);
+    });
+
     // Nejdřív skryjeme všechny kontejnery
     document.getElementById('material-container').style.display = 'none';
     document.getElementById('dimenze-container').style.display = 'none';
@@ -505,9 +574,9 @@ function zobrazTabulky(prvek, dimenze, plocha, vlastnosti, ohyb, tlak, filtr) {
     document.getElementById('zatrideni-container').style.display = 'none';
 
     // Zobrazení tabulky PRVEK
-    var prvekTable = `<tr><th colspan=3>PRVEK</th></tr>`;
+    var prvekTable = `<tr><th colspan=${isToggleActive ? 3 : 2}>PRVEK</th></tr>`;
     prvek.forEach(function(item) {
-        prvekTable += `<tr><td>${item.nazev}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+        prvekTable += `<tr>${isToggleActive ? `<td>${item.nazev}</td>` : ''}<td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
     });
     document.getElementById('prvek-table').innerHTML = prvekTable;
 
@@ -516,21 +585,21 @@ function zobrazTabulky(prvek, dimenze, plocha, vlastnosti, ohyb, tlak, filtr) {
         document.getElementById('material-container').style.display = 'block';
         var ocelTrida = document.getElementById('ocel').value;
         
-        var materialTable = `<tr><th colspan=4>MATERIÁLOVÉ VLASTNOSTI</th></tr>
-        <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>`;
+        var materialTable = `<tr><th colspan=${isToggleActive ? 4 : 3}>MATERIÁLOVÉ VLASTNOSTI</th></tr>
+        <tr>${isToggleActive ? '<th>Název</th>' : ''}<th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>`;
 
         // Přidání konstantních hodnot
         Object.values(materialProperties.konstantniHodnoty).forEach(prop => {
-            materialTable += `<tr><td>${prop.nazev}</td><td>${prop.znacka}</td><td>${prop.hodnota}</td><td>${prop.jednotky}</td></tr>`;
+            materialTable += `<tr>${isToggleActive ? `<td>${prop.nazev}</td>` : ''}<td>${prop.znacka}</td><td>${prop.hodnota}</td><td>${prop.jednotky}</td></tr>`;
         });
 
         // Přidání mezí kluzu a pevnosti
-        materialTable += `<tr><td>Mez kluzu<span class="info-icon" onclick='zobrazitInfo("Mez kluzu je hodnota napětí, při které materiál začíná plasticky deformovat. Je to důležitá charakteristika pro posouzení únosnosti ocelových konstrukcí.", true)'>ⓘ</span></td><td>f<sub>y</sub></td><td>${materialProperties.mezeKluzu[ocelTrida]}</td><td>MPa</td></tr>`;
-        materialTable += `<tr><td>Mez pevnosti</td><td>f<sub>u</sub></td><td>${materialProperties.mezePevnosti[ocelTrida]}</td><td>MPa</td></tr>`;
+        materialTable += `<tr>${isToggleActive ? `<td>Mez kluzu<span class="info-icon" onclick='zobrazitInfo("Mez kluzu je hodnota napětí, při které materiál začíná plasticky deformovat. Je to důležitá charakteristika pro posouzení únosnosti ocelových konstrukcí.", true)'>ⓘ</span></td>` : ''}<td>f<sub>y</sub></td><td>${materialProperties.mezeKluzu[ocelTrida]}</td><td>MPa</td></tr>`;
+        materialTable += `<tr>${isToggleActive ? `<td>Mez pevnosti</td>` : ''}<td>f<sub>u</sub></td><td>${materialProperties.mezePevnosti[ocelTrida]}</td><td>MPa</td></tr>`;
 
         // Přidání dílčích součinitelů
         Object.values(materialProperties.dilciSoucinitele).forEach(soucinitel => {
-            materialTable += `<tr><td>${soucinitel.nazev}<span class="info-icon" onclick='zobrazitInfo("${soucinitel.popis}", false)'>ⓘ</span></td><td>${soucinitel.znacka}</td><td>${soucinitel.hodnota}</td><td>${soucinitel.jednotky}</td></tr>`;
+            materialTable += `<tr>${isToggleActive ? `<td>${soucinitel.nazev}<span class="info-icon" onclick='zobrazitInfo("${soucinitel.popis}", false)'>ⓘ</span></td>` : ''}<td>${soucinitel.znacka}</td><td>${soucinitel.hodnota}</td><td>${soucinitel.jednotky}</td></tr>`;
         });
 
         document.getElementById('material-table').innerHTML = materialTable;
@@ -539,11 +608,11 @@ function zobrazTabulky(prvek, dimenze, plocha, vlastnosti, ohyb, tlak, filtr) {
     if (filtr === 'all' || filtr === 'dimenze') {
         document.getElementById('dimenze-container').style.display = 'block';
         var dimenzeTable = `
-            <tr><th colspan=4>DIMENZE</th></tr>
-            <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
+            <tr><th colspan=${isToggleActive ? 4 : 3}>DIMENZE</th></tr>
+            <tr>${isToggleActive ? '<th>Název</th>' : ''}<th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
         `;
         dimenze.forEach(function(item) {
-            dimenzeTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+            dimenzeTable += `<tr>${isToggleActive ? `<td>${item.nazev}</td>` : ''}<td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
         });
         document.getElementById('dimenze-table').innerHTML = dimenzeTable;
     }
@@ -551,25 +620,29 @@ function zobrazTabulky(prvek, dimenze, plocha, vlastnosti, ohyb, tlak, filtr) {
     if (filtr === 'all' || filtr === 'plocha') {
         document.getElementById('plocha-container').style.display = 'block';
         var plochaTable = `
-            <tr><th colspan=4>PLOCHA</th></tr>
-            <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
+            <tr><th colspan=${isToggleActive ? 4 : 3}>PLOCHA</th></tr>
+            <tr>${isToggleActive ? '<th>Název</th>' : ''}<th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
         `;
         plocha.forEach(function(item) {
-            plochaTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+            plochaTable += `<tr>${isToggleActive ? `<td>${item.nazev}</td>` : ''}<td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
         });
         document.getElementById('plocha-table').innerHTML = plochaTable;
+    } else {
+        document.getElementById('plocha-container').style.display = 'none';
     }
 
     if (filtr === 'all' || filtr === 'vlastnosti') {
         document.getElementById('vlastnosti-container').style.display = 'block';
         var vlastnostiTable = `
-            <tr><th colspan=4>VLASTNOSTI</th></tr>
-            <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
+            <tr><th colspan=${isToggleActive ? 4 : 3}>VLASTNOSTI</th></tr>
+            <tr>${isToggleActive ? '<th>Název</th>' : ''}<th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
         `;
         vlastnosti.forEach(function(item) {
-            vlastnostiTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+            vlastnostiTable += `<tr>${isToggleActive ? `<td>${item.nazev}</td>` : ''}<td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
         });
         document.getElementById('vlastnosti-table').innerHTML = vlastnostiTable;
+    } else {
+        document.getElementById('vlastnosti-container').style.display = 'none';
     }
 
     if (filtr === 'all' || filtr === 'ohyb') {
@@ -585,6 +658,8 @@ function zobrazTabulky(prvek, dimenze, plocha, vlastnosti, ohyb, tlak, filtr) {
             </tr>
         `;
         document.getElementById('ohyb-table').innerHTML = ohybTable;
+    } else {
+        document.getElementById('ohyb-container').style.display = 'none';
     }
 
     if (filtr === 'all' || filtr === 'tlak') {
@@ -600,10 +675,22 @@ function zobrazTabulky(prvek, dimenze, plocha, vlastnosti, ohyb, tlak, filtr) {
             </tr>
         `;
         document.getElementById('tlak-table').innerHTML = tlakTable;
+    } else {
+        document.getElementById('tlak-container').style.display = 'none';
     }
 }
 
 function zobrazTabulkyproOBD(prvek, dimenzeOBD, plocha, vlastnostiOBD, ohybMekka, ohybTuha, tlak, filtr) {
+    const isToggleActive = document.getElementById('toggle-switch').classList.contains('active');
+    
+    // Dynamically add/remove class to tables for styling
+    ['prvek-table', 'material-table', 'dimenze-table', 'plocha-table', 'vlastnosti-table', 'ohyb-table', 'tlak-table'].forEach(id => {
+        const table = document.getElementById(id);
+        if (table) {
+            table.classList.toggle('velicina-hidden', !isToggleActive);
+        }
+    });
+
     // Nejdřív skryjeme všechny kontejnery
     document.getElementById('material-container').style.display = 'none';
     document.getElementById('dimenze-container').style.display = 'none';
@@ -616,9 +703,9 @@ function zobrazTabulkyproOBD(prvek, dimenzeOBD, plocha, vlastnostiOBD, ohybMekka
     document.getElementById('zatrideni-container').style.display = 'none';
 
     // Zobrazení tabulky PRVEK
-    var prvekTable = `<tr><th colspan=3>PRVEK</th></tr>`;
+    var prvekTable = `<tr><th colspan=${isToggleActive ? 3 : 2}>PRVEK</th></tr>`;
     prvek.forEach(function(item) {
-        prvekTable += `<tr><td>${item.nazev}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+        prvekTable += `<tr>${isToggleActive ? `<td>${item.nazev}</td>` : ''}<td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
     });
     document.getElementById('prvek-table').innerHTML = prvekTable;
 
@@ -627,21 +714,21 @@ function zobrazTabulkyproOBD(prvek, dimenzeOBD, plocha, vlastnostiOBD, ohybMekka
         document.getElementById('material-container').style.display = 'block';
         var ocelTrida = document.getElementById('ocel').value;
         
-        var materialTable = `<tr><th colspan=4>MATERIÁLOVÉ VLASTNOSTI</th></tr>
-        <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>`;
+        var materialTable = `<tr><th colspan=${isToggleActive ? 4 : 3}>MATERIÁLOVÉ VLASTNOSTI</th></tr>
+        <tr>${isToggleActive ? '<th>Název</th>' : ''}<th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>`;
 
         // Přidání konstantních hodnot
         Object.values(materialProperties.konstantniHodnoty).forEach(prop => {
-            materialTable += `<tr><td>${prop.nazev}</td><td>${prop.znacka}</td><td>${prop.hodnota}</td><td>${prop.jednotky}</td></tr>`;
+            materialTable += `<tr>${isToggleActive ? `<td>${prop.nazev}</td>` : ''}<td>${prop.znacka}</td><td>${prop.hodnota}</td><td>${prop.jednotky}</td></tr>`;
         });
 
         // Přidání mezí kluzu a pevnosti
-        materialTable += `<tr><td>Mez kluzu<span class="info-icon" onclick='zobrazitInfo("Mez kluzu je hodnota napětí, při které materiál začíná plasticky deformovat. Je to důležitá charakteristika pro posouzení únosnosti ocelových konstrukcí.", true)'>ⓘ</span></td><td>f<sub>y</sub></td><td>${materialProperties.mezeKluzu[ocelTrida]}</td><td>MPa</td></tr>`;
-        materialTable += `<tr><td>Mez pevnosti</td><td>f<sub>u</sub></td><td>${materialProperties.mezePevnosti[ocelTrida]}</td><td>MPa</td></tr>`;
+        materialTable += `<tr>${isToggleActive ? `<td>Mez kluzu<span class="info-icon" onclick='zobrazitInfo("Mez kluzu je hodnota napětí, při které materiál začíná plasticky deformovat. Je to důležitá charakteristika pro posouzení únosnosti ocelových konstrukcí.", true)'>ⓘ</span></td>` : ''}<td>f<sub>y</sub></td><td>${materialProperties.mezeKluzu[ocelTrida]}</td><td>MPa</td></tr>`;
+        materialTable += `<tr>${isToggleActive ? `<td>Mez pevnosti</td>` : ''}<td>f<sub>u</sub></td><td>${materialProperties.mezePevnosti[ocelTrida]}</td><td>MPa</td></tr>`;
 
         // Přidání dílčích součinitelů
         Object.values(materialProperties.dilciSoucinitele).forEach(soucinitel => {
-            materialTable += `<tr><td>${soucinitel.nazev}<span class="info-icon" onclick='zobrazitInfo("${soucinitel.popis}", false)'>ⓘ</span></td><td>${soucinitel.znacka}</td><td>${soucinitel.hodnota}</td><td>${soucinitel.jednotky}</td></tr>`;
+            materialTable += `<tr>${isToggleActive ? `<td>${soucinitel.nazev}<span class="info-icon" onclick='zobrazitInfo("${soucinitel.popis}", false)'>ⓘ</span></td>` : ''}<td>${soucinitel.znacka}</td><td>${soucinitel.hodnota}</td><td>${soucinitel.jednotky}</td></tr>`;
         });
 
         document.getElementById('material-table').innerHTML = materialTable;
@@ -651,11 +738,11 @@ function zobrazTabulkyproOBD(prvek, dimenzeOBD, plocha, vlastnostiOBD, ohybMekka
     if (filtr === 'all' || filtr === 'dimenze') {
         document.getElementById('dimenze-container').style.display = 'block';
         var dimenzeTable = `
-            <tr><th colspan=4>DIMENZE</th></tr>
-            <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
+            <tr><th colspan=${isToggleActive ? 4 : 3}>DIMENZE</th></tr>
+            <tr>${isToggleActive ? '<th>Název</th>' : ''}<th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
         `;
         dimenzeOBD.forEach(function(item) {
-            dimenzeTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+            dimenzeTable += `<tr>${isToggleActive ? `<td>${item.nazev}</td>` : ''}<td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
         });
         document.getElementById('dimenze-table').innerHTML = dimenzeTable;
     }
@@ -663,11 +750,11 @@ function zobrazTabulkyproOBD(prvek, dimenzeOBD, plocha, vlastnostiOBD, ohybMekka
     if (filtr === 'all' || filtr === 'plocha') {
         document.getElementById('plocha-container').style.display = 'block';
         var plochaTable = `
-            <tr><th colspan=4>PLOCHA</th></tr>
-            <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
+            <tr><th colspan=${isToggleActive ? 4 : 3}>PLOCHA</th></tr>
+            <tr>${isToggleActive ? '<th>Název</th>' : ''}<th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
         `;
         plocha.forEach(function(item) {
-            plochaTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+            plochaTable += `<tr>${isToggleActive ? `<td>${item.nazev}</td>` : ''}<td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
         });
         document.getElementById('plocha-table').innerHTML = plochaTable;
     }
@@ -675,11 +762,11 @@ function zobrazTabulkyproOBD(prvek, dimenzeOBD, plocha, vlastnostiOBD, ohybMekka
     if (filtr === 'all' || filtr === 'vlastnosti') {
         document.getElementById('vlastnosti-container').style.display = 'block';
         var vlastnostiTable = `
-            <tr><th colspan=4>VLASTNOSTI</th></tr>
-            <tr><th>Název</th><th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
+            <tr><th colspan=${isToggleActive ? 4 : 3}>VLASTNOSTI</th></tr>
+            <tr>${isToggleActive ? '<th>Název</th>' : ''}<th>Značka</th><th>Hodnota</th><th>Jednotky</th></tr>
         `;
         vlastnostiOBD.forEach(function(item) {
-            vlastnostiTable += `<tr><td>${item.nazev}</td><td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
+            vlastnostiTable += `<tr>${isToggleActive ? `<td>${item.nazev}</td>` : ''}<td>${item.znacka}</td><td>${item.hodnota}</td><td>${item.jednotky}</td></tr>`;
         });
         document.getElementById('vlastnosti-table').innerHTML = vlastnostiTable;
     }
@@ -718,6 +805,8 @@ function zobrazTabulkyproOBD(prvek, dimenzeOBD, plocha, vlastnostiOBD, ohybMekka
             </table>
         `;
         document.getElementById('ohyb-table').innerHTML = ohybTable;
+    } else {
+        document.getElementById('ohyb-container').style.display = 'none';
     }
 
     if (filtr === 'all' || filtr === 'tlak') {
@@ -733,6 +822,8 @@ function zobrazTabulkyproOBD(prvek, dimenzeOBD, plocha, vlastnostiOBD, ohybMekka
             </tr>
         `;
         document.getElementById('tlak-table').innerHTML = tlakTable;
+    } else {
+        document.getElementById('tlak-container').style.display = 'none';
     }
 }
 
